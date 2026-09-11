@@ -103,7 +103,7 @@ powershell -File ..\docker\build.ps1
 
 1. **شکل‌ها درج شده‌اند.** سه شکل خروجی Lumerical در `figures/` هستند و
    هر سه سطر `\includegraphics` در `sections/04_results.tex` فعال است:
-   `Purcell_Spectrum.pdf`، `radiated_power_T.pdf`، `NearField_Profile.png`.
+   `Test2_Purcell.pdf`، `Test2_Radiated.pdf`، `Test2_Nearfield_controls.pdf`.
    دو نمودار برداری‌اند (خروجی GL2PS داخل VTK) و XeLaTeX همان PDF را درج
    می‌کند. برای پیش‌نمایش HTML، `tools/figures_prep.py` نسخه‌ی PNG آن‌ها
    را در `figures/web/` می‌سازد. اگر شکل نویی افزودید:
@@ -120,8 +120,8 @@ powershell -File ..\docker\build.ps1
    یکسان بماند.
 2. **پارامترهای هندسی درج شده‌اند.** بخش روش‌شناسی اکنون اعداد اجرای
    گزارش‌شده را دارد: $L = 60$ نانومتر (بدنه‌ی ۴۰ + دو کلاهک ۱۰)،
-   $D = 20$، $R = 10$، دوقطبی در $z = 35$ نانومتر، مش موضعی ۲ نانومتر روی
-   ناحیه‌ی $40\times40\times80$، `trans_box` مکعب ۴۰۰ نانومتری و ناحیه‌ی
+   $D = 20$، $R = 10$، دوقطبی در $z = 35$ نانومتر، مش موضعی ۲ نانومتر با پوشش پویای ساختار و چشمه، شش مانیتور وجهی روی
+   مکعب شار ۴۰۰ نانومتری و ناحیه‌ی
    FDTD مکعب ۶۰۰ نانومتری با PML. همین مقادیر در
    `simulation/nanorod_purcell.lsf` هم همگام شد. ثبت راستی‌آزمایی با
    شماره‌ی سطر منبع: `../evidence/source_audit.md`.
