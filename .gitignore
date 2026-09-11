@@ -1,0 +1,5 @@
+fdtd_mine/__pycache__/
+fdtd_mine/prod.log
+fdtd_mine/*_prod.npz
+fdtd_mine/vac_sph.npz
+fdtd_mine/sph_prod.npz
