@@ -185,6 +185,7 @@ def take_math(text):
                 row = row.rstrip() + '\\tag{%d}' % N['eq']
             rows.append(row)
         tex = '\\begin{%s}%s\\end{%s}' % (env, '\\\\'.join(rows), env)
+        tex = tex.replace('<', '&lt;').replace('>', '&gt;')   # HTML-safe
         anchor = ' id="%s"' % html.escape(first) if first else ''
         # در align چند رابطه یک بلوک‌اند و id فقط یکی می‌تواند باشد؛ برای
         # برچسب‌های بعدی لنگر خالی می‌گذاریم تا \eqref به آن‌ها هم برسد.
@@ -196,7 +197,8 @@ def take_math(text):
                   display, text, flags=re.S)
     # $...$ درون‌خطی
     text = re.sub(r'(?<!\\)\$(.+?)(?<!\\)\$',
-                  lambda m: keep('\\(' + m.group(1) + '\\)'), text, flags=re.S)
+                  lambda m: keep('\\(' + m.group(1).replace('<', '&lt;').replace('>', '&gt;') + '\\)'),
+                  text, flags=re.S)
     return text
 
 
@@ -255,7 +257,10 @@ def take_floats(text):
         if tm:
             inner = body[tm.end():]
             inner = inner[:inner.find('\\end{tabular}')]
-            inner = re.sub(r'^\s*\{[^}]*\}', '', inner, count=1)
+            inner = inner.lstrip()
+            if inner.startswith('{'):           # مشخصه‌ی ستون‌ها، حتی با p{..\linewidth} تودرتو
+                _, k = group(inner, 0)
+                inner = inner[k:]
             inner = re.sub(r'\\(toprule|midrule|bottomrule|hline)', '', inner)
             for ri, row in enumerate([r for r in inner.split('\\\\') if r.strip()]):
                 tag = 'th' if ri == 0 else 'td'
@@ -304,6 +309,20 @@ def inline(text):
     text = re.sub(r'\\eqref\{([^}]+)\}', r'<x-ref k="\1" p="1"></x-ref>', text)
     text = re.sub(r'\\ref\{([^}]+)\}', r'<x-ref k="\1"></x-ref>', text)
 
+    # \paragraph{عنوان} → عنوان درشت درون‌خطی ؛ \footnote{...} → پرانتز
+    for cmd, tag in (('paragraph', 'b class="para"'), ('footnote', 'span class="fn"')):
+        while True:
+            m = re.search(r'\\%s\{' % cmd, text)
+            if not m:
+                break
+            arg, end = group(text, m.end() - 1)
+            close = tag.split()[0]
+            if cmd == 'footnote':
+                rep = ' <%s>(%s)</%s>' % (tag, arg, close)
+            else:
+                rep = '<%s>%s</%s> ' % (tag, arg, close)
+            text = text[:m.start()] + rep + text[end:]
+
     for cmd, tag in (('textbf', 'b'), ('emph', 'i'), ('textit', 'i'),
                      ('texttt', 'code')):
         while True:
@@ -327,6 +346,10 @@ def bib(path):
     if not os.path.isfile(path):
         return {}
     src = open(path, encoding='utf-8').read()
+    for a, b in (('{\\"u}', 'ü'), ('{\\"o}', 'ö'), ('{\\"a}', 'ä'), ('{\\aa}', 'å'),
+                 ('\\"u', 'ü'), ('\\"o', 'ö'), ('\\"a', 'ä'), ('\\aa ', 'å'),
+                 ("\\'e", 'é'), ('\\&', '&')):
+        src = src.replace(a, b)
     out = {}
     for m in re.finditer(r'@\w+\s*\{\s*([^,\s]+)\s*,', src):
         body, _ = group(src, src.index('{', m.start()))
@@ -436,6 +459,7 @@ PAGE = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>@@T@@</title>
 <style>
+.fn{font-size:.85em;color:#555} b.para{color:#7a1f1f}
 /* قلم متن: وزیرمتن (SIL OFL 1.1). فایل .woff2 آن در manuscript/fonts کنار
    همین فایل است، ولی نشانی زیر پیش از نوشتن خروجی به data: تبدیل می‌شود
    (inline_fonts) تا کروم هم در file:// قلم را نشان دهد، نه فقط فایرفاکس. */
