@@ -595,7 +595,7 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
 <header class="article-head">
  <div class="brand"><div><div class="brand-name">@@AFF@@</div>
  <div class="brand-type">مقاله علمی ـ پژوهشی دانشجویی</div></div>
- <img class="brand-logo" src="@@LOGO@@" alt="نشان دانشگاه اصفهان"></div>
+ <img class="brand-logo" src="assets/university-isfahan-logo.png" alt="نشان دانشگاه اصفهان"></div>
  <h1>@@T@@</h1>
  <div class="byline">@@AU@@</div>
  <div class="affiliation">@@AFF@@<br>استاد راهنما: @@ADV@@<br>
@@ -676,8 +676,7 @@ def main():
         mj = MATHJAX_CDN
         print('MathJax: از CDN (برای نسخه‌ی آفلاین:'
               ' python tools/vendor_mathjax.py)')
-    logo_uri = image_data_uri('assets/university-isfahan-logo.png')
-    for k, v in (('@@T@@', inline(title)), ('@@LOGO@@', logo_uri),
+    for k, v in (('@@T@@', inline(title)),
                  ('@@AU@@', inline(authors)), ('@@AFF@@', inline(affiliation)),
                  ('@@ADV@@', inline(advisor)),
                  ('@@DATE@@', inline(paperdate)), ('@@ABS@@', abs_html),
@@ -712,7 +711,7 @@ def main():
     # MathJax and figure assets live under manuscript/. Prefix only those
     # asset URLs in the root copy; a <base> element is deliberately avoided
     # because it would also redirect in-page #anchors away from index.html.
-    root_doc = re.sub(r'((?:src|href)=")((?:vendor|figures)/)',
+    root_doc = re.sub(r'((?:src|href)=")((?:vendor|figures|assets)/)',
                       r'\1manuscript/\2', doc)
     open(ROOT_OUT, 'w', encoding='utf-8', newline='\n').write(root_doc)
 
