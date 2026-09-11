@@ -27,6 +27,7 @@ for _s in (sys.stdout, sys.stderr):
 MS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                   'manuscript')
 OUT = os.path.join(MS, 'preview.html')
+ROOT_OUT = os.path.join(os.path.dirname(MS), 'index.html')
 
 # MathJax: اگر نسخه‌ی محلی (tools/vendor_mathjax.py) موجود باشد همان استفاده
 # می‌شود تا پیش‌نمایش بدون اینترنت هم فرمول‌ها را نشان دهد؛ وگرنه CDN.
@@ -443,15 +444,31 @@ PAGE = """<!DOCTYPE html>
  format("woff2");font-weight:400;font-display:swap}
 @font-face{font-family:"Vazirmatn";src:url("fonts/Vazirmatn-Bold.woff2")
  format("woff2");font-weight:700;font-display:swap}
-:root{--ink:#16181d;--soft:#5b6472;--line:#e3e6ea;--tint:#f6f8fa;
- --accent:#0b4fa0;--num:#8a1c1c;--maxw:47rem}
+:root{--ink:#182230;--soft:#5d6877;--line:#d9e0e8;--tint:#f5f8fb;
+ --accent:#123f70;--accent2:#8b6a24;--num:#8a1c1c;--maxw:49rem}
 *{box-sizing:border-box}
+html{background:#e9edf2;scroll-behavior:smooth}
 body{font-family:"Vazirmatn","XB Niloofar","Tahoma",sans-serif;
  font-size:1.02rem;line-height:2.05;max-width:var(--maxw);margin:2.5rem auto;
- padding:0 1.3rem;text-align:justify;text-justify:inter-word;color:var(--ink);
- background:#fff;-webkit-font-smoothing:antialiased}
-h1{font-size:1.55rem;line-height:1.85;text-align:center;font-weight:700;
- letter-spacing:-.01em;margin:0 0 1.6rem}
+ padding:2.4rem 3.3rem;text-align:justify;text-justify:inter-word;color:var(--ink);
+ background:#fff;box-shadow:0 12px 40px #23364d22;-webkit-font-smoothing:antialiased}
+.article-head{border-top:7px solid var(--accent);padding-top:1.25rem;margin-bottom:1.45rem}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:1rem;
+ padding-bottom:.85rem;border-bottom:1px solid var(--line);color:var(--accent)}
+.brand-mark{width:3.3rem;height:3.3rem;border:2px solid var(--accent);border-radius:50%;
+ display:grid;place-items:center;font-size:.7rem;line-height:1.35;text-align:center;font-weight:700}
+.brand-name{font-size:1.08rem;font-weight:700}.brand-type{color:var(--soft);font-size:.78rem}
+h1{font-size:1.62rem;line-height:1.85;text-align:center;font-weight:700;
+ letter-spacing:-.01em;margin:1.35rem auto 1rem;max-width:44rem}
+.byline{text-align:center;font-size:1.02rem;font-weight:700;color:var(--accent);margin:.4rem 0}
+.affiliation{text-align:center;color:var(--soft);font-size:.92rem;line-height:1.85}
+.paper-date{display:inline-block;margin-top:.35rem;padding:.1rem .7rem;border-radius:999px;
+ background:var(--tint);border:1px solid var(--line);color:var(--soft);font-size:.82rem}
+.print-tools{position:fixed;direction:rtl;left:1rem;bottom:1rem;z-index:10;
+ display:flex;gap:.5rem;align-items:center;background:#fff;padding:.55rem;border-radius:10px;
+ box-shadow:0 4px 20px #12263a33;border:1px solid var(--line)}
+.print-tools button{font:inherit;border:0;border-radius:7px;background:var(--accent);color:#fff;
+ padding:.55rem .9rem;cursor:pointer}.print-tools span{font-size:.74rem;color:var(--soft);max-width:11rem}
 h2{font-size:1.22rem;line-height:1.8;font-weight:700;margin:2.6rem 0 .9rem;
  padding-bottom:.35rem;border-bottom:2px solid var(--line)}
 h3{font-size:1.06rem;line-height:1.8;font-weight:700;margin:1.9rem 0 .6rem;
@@ -514,12 +531,28 @@ ol.refs li{direction:ltr;text-align:left;font-family:"Times New Roman",serif;
 code{direction:ltr;display:inline-block;font-size:.9em;
  background:var(--tint);border:1px solid var(--line);border-radius:4px;
  padding:0 .3em}
-@media (max-width:34rem){body{font-size:.98rem;line-height:1.95;
- margin:1.2rem auto}h1{font-size:1.3rem}a.pn{display:none}}
-@media print{body{max-width:none;margin:0;font-size:11pt}.toc{display:none}
- h2,h3{page-break-after:avoid}figure,.eq{page-break-inside:avoid}
- figure img{border:0;padding:0}a{color:inherit;text-decoration:none}
- a.pn,.hint{display:none}}
+@media (max-width:40rem){html{background:#fff}body{font-size:.98rem;line-height:1.95;
+ margin:0 auto;padding:1.2rem;box-shadow:none}h1{font-size:1.3rem}.brand-mark{width:2.8rem;height:2.8rem}
+ a.pn{display:none}.print-tools span{display:none}}
+@page{size:A4;margin:17mm 18mm 19mm 18mm}
+@media print{
+ html,body{background:#fff}
+ body{max-width:none;margin:0;padding:0;font-size:10.5pt;line-height:1.82;box-shadow:none;color:#111}
+ .article-head{border-top:5px solid var(--accent);margin-bottom:8mm}
+ h1{font-size:17pt;line-height:1.65;margin:7mm auto 4mm}
+ h2{font-size:13pt;margin-top:8mm;break-after:avoid-page;page-break-after:avoid}
+ h3{font-size:11.5pt;margin-top:6mm;break-after:avoid-page;page-break-after:avoid}
+ p{orphans:3;widows:3;margin-bottom:2.5mm}
+ .abs{break-inside:avoid-page;border-radius:0;background:#f5f7f9}
+ .toc{break-before:page;page-break-before:always;border-radius:0}
+ figure,.eq,table{break-inside:avoid-page;page-break-inside:avoid}
+ figure{margin:6mm 0}figure img{border:0;padding:0;border-radius:0}
+ figcaption{font-size:9pt;line-height:1.65}
+ ol.refs li{font-size:8.8pt;line-height:1.5;break-inside:avoid}
+ a{color:inherit;text-decoration:none}
+ a.pn,.hint,.print-tools{display:none!important}
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
@@ -527,16 +560,20 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
 </script>
 <script defer src="@@MJ@@"></script>
 </head><body>
-<h1>@@T@@</h1>
-<div class="hint">
-<b>این یک پیش‌نمایش برای بازبینی است، نه نسخه‌ی نهایی.</b>
-صفحه‌آرایی، شماره‌ی صفحه و شکستِ سطرها در PDF نهایی (XeLaTeX) تعیین
-می‌شود؛ اینجا فقط متن، فرمول‌ها، شکل‌ها و مراجع را ببینید.
-عددِ خاکستریِ کنار هر پاراگراف شماره‌ی همان پاراگراف است — در بازخوردتان
-به همان شماره ارجاع دهید (مثلاً «پاراگراف ۱۴، جمله‌ی دوم»). با کلیک روی
-شماره، نشانی همان پاراگراف در نوار آدرس می‌آید و می‌توانید لینکش را
-بفرستید. کلیک روی نمودارها نسخه‌ی برداری‌شان را باز می‌کند.
-</div>
+<div class="print-tools"><button type="button" onclick="window.print()">ذخیره به صورت PDF</button>
+<span>در پنجره چاپ: A4، مقیاس ۱۰۰٪ و Background graphics روشن باشد.</span></div>
+<header class="article-head">
+ <div class="brand"><div><div class="brand-name">@@AFF@@</div>
+ <div class="brand-type">مقاله علمی ـ پژوهشی دانشجویی</div></div>
+ <div class="brand-mark">دانشگاه<br>اصفهان</div></div>
+ <h1>@@T@@</h1>
+ <div class="byline">@@AU@@</div>
+ <div class="affiliation">@@AFF@@<br>استاد راهنما: @@ADV@@<br>
+ <span class="paper-date">@@DATE@@</span></div>
+</header>
+<div class="hint"><b>نسخه آماده چاپ تک‌ستونه.</b>
+برای خروجی PDF از دکمه پایین صفحه استفاده کنید. شماره‌های خاکستری کنار
+پاراگراف‌ها فقط در نمایشگر دیده می‌شوند و در چاپ حذف خواهند شد.</div>
 <div class="abs"><h2>چکیده</h2>@@ABS@@</div>
 <p class="kw"><b>کلیدواژه‌ها:</b> @@KW@@</p>
 <nav class="toc"><b>فهرست</b>@@TOC@@</nav>
@@ -550,8 +587,17 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
 def main():
     main_tex = read_tex(os.path.join(MS, 'main.tex'))
 
+    def command_value(name, default=''):
+        m = re.search(r'\\(?:newcommand\{\\' + re.escape(name) + r'\}|'
+                      + re.escape(name) + r')\{', main_tex)
+        return ' '.join(group(main_tex, m.end() - 1)[0].split()) if m else default
+
     tm = re.search(r'\\title\{', main_tex)
     title = ' '.join(group(main_tex, tm.end() - 1)[0].split()) if tm else ''
+    authors = command_value('paperauthors', 'امین حسین سدیدی، پارسا مولایی')
+    affiliation = command_value('paperaffiliation', 'دانشگاه اصفهان')
+    advisor = command_value('paperadvisor', 'دکتر مالک باقری هارونی')
+    paperdate = command_value('paperdate', 'مهر ۱۴۰۵')
 
     am = re.search(r'\\begin\{abstract\}(.*?)\\end\{abstract\}', main_tex, re.S)
     abstract = am.group(1) if am else ''
@@ -600,7 +646,9 @@ def main():
         mj = MATHJAX_CDN
         print('MathJax: از CDN (برای نسخه‌ی آفلاین:'
               ' python tools/vendor_mathjax.py)')
-    for k, v in (('@@T@@', inline(title)), ('@@ABS@@', abs_html),
+    for k, v in (('@@T@@', inline(title)), ('@@AU@@', inline(authors)),
+                 ('@@AFF@@', inline(affiliation)), ('@@ADV@@', inline(advisor)),
+                 ('@@DATE@@', inline(paperdate)), ('@@ABS@@', abs_html),
                  ('@@KW@@', kw_html), ('@@TOC@@', toc),
                  ('@@BODY@@', main_html), ('@@REFS@@', '\n'.join(refs)),
                  ('@@MJ@@', mj)):
@@ -629,8 +677,17 @@ def main():
 
     open(OUT, 'w', encoding='utf-8', newline='\n').write(doc)
 
+    # MathJax and figure assets live under manuscript/. Prefix only those
+    # asset URLs in the root copy; a <base> element is deliberately avoided
+    # because it would also redirect in-page #anchors away from index.html.
+    root_doc = re.sub(r'((?:src|href)=")((?:vendor|figures)/)',
+                      r'\1manuscript/\2', doc)
+    open(ROOT_OUT, 'w', encoding='utf-8', newline='\n').write(root_doc)
+
     print('نوشته شد: %s  (%d کیلوبایت)'
           % (OUT, len(doc.encode('utf-8')) // 1024))
+    print('نسخه‌ی ریشه: %s (دارایی‌ها از manuscript/ بارگیری می‌شوند)'
+          % ROOT_OUT)
     print('بخش‌ها: %d | شکل: %d | جدول: %d | رابطه: %d | مرجع: %d'
           % (N['sec'], N['fig'], N['tab'], N['eq'], len(refs)))
     left = sorted(set(re.findall(r'\\([a-zA-Z]+)', re.sub(

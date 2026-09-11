@@ -25,6 +25,9 @@
 \usepackage{caption}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{float}
 
 % --- کتاب‌نامه: biblatex با سبک عددی ------------------------------
 \usepackage[
@@ -47,7 +50,9 @@
   citecolor  = blue!55!black,
   urlcolor   = blue!55!black,
   pdftitle   = {Numerical study of spontaneous emission enhancement near a gold plasmonic nanorod},
-  pdfauthor  = {}
+  pdfauthor  = {Amin Hossein Sadidi and Parsa Molaei},
+  pdfsubject = {3D-FDTD study of Purcell enhancement and radiative power near a gold nanorod},
+  pdfkeywords = {Purcell factor, gold nanorod, FDTD, radiative efficiency, anisotropy}
 }
 
 % --- فارسی‌نویسی: xepersian باید آخرین بستهٔ بارگذاری‌شده باشد -------
@@ -98,7 +103,18 @@
 % --- تنظیم فاصله و سرفصل ------------------------------------------
 \linespread{1.35}
 \setlength{\parskip}{0.4em}
-\captionsetup{font=small,labelfont=bf}
+\captionsetup{font=small,labelfont=bf,justification=justified,singlelinecheck=false}
+\setlist{nosep,leftmargin=1.6em}
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{دانشگاه اصفهان}
+\fancyhead[L]{فاکتور پورسل و توان تابشی نانومیله طلا}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
 
 % --- میان‌بُرهای پرتکرار -------------------------------------------
 \newcommand{\Fp}{F_p}
@@ -107,13 +123,23 @@
 \begin{document}
 
 % ===================================================================
+\newcommand{\paperauthors}{امین حسین سدیدی، پارسا مولایی}
+\newcommand{\paperaffiliation}{دانشگاه اصفهان}
+\newcommand{\paperadvisor}{دکتر مالک باقری هارونی}
+\newcommand{\paperdate}{مهر ۱۴۰۵}
+
 \title{بررسی عددی تقویت گسیل خودبه‌خودی و راندمان تابشی گسیل‌گر
 کوانتومی در مجاورت نانومیله پلاسمونی طلا با روش 3D-FDTD:
 محدودیت توصیف همسانگرد نرخ گسیل در هندسه‌های ناهمسانگرد}
-
-\author{}
-\date{}
+\author{\paperauthors\\[0.7em]
+\normalsize \paperaffiliation\\[0.35em]
+\normalsize استاد راهنما: \paperadvisor}
+\date{\paperdate}
 \maketitle
+\thispagestyle{empty}
+\vspace{-1em}
+\hrule
+\vspace{1.2em}
 
 % ===================================================================
 \begin{abstract}
