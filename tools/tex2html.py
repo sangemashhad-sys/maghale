@@ -463,7 +463,14 @@ html{background:#e9edf2;scroll-behavior:smooth}
 body{font-family:"Vazirmatn","XB Niloofar","Tahoma",sans-serif;
  font-size:1.02rem;line-height:2.05;max-width:var(--maxw);margin:2.5rem auto;
  padding:2.4rem 3.3rem;text-align:justify;text-justify:inter-word;color:var(--ink);
- background:#fff;box-shadow:0 12px 40px #23364d22;-webkit-font-smoothing:antialiased}
+ background:#fff;box-shadow:0 12px 40px #23364d22;-webkit-font-smoothing:antialiased;
+ overflow-wrap:break-word;word-wrap:break-word}
+p,li,figcaption,td,th{overflow-wrap:anywhere;word-break:normal}
+img,svg,table{max-width:100%}
+mjx-container{max-width:100%;font-weight:400!important;color:#263445}
+mjx-container[jax="SVG"][display="true"]{width:100%;overflow-x:auto;overflow-y:hidden;
+ font-size:.94em!important}
+mjx-container[jax="SVG"][display="true"] svg{max-width:100%!important;height:auto!important}
 .article-head{border-top:7px solid var(--accent);padding-top:1.25rem;margin-bottom:1.45rem}
 .brand{display:flex;align-items:center;justify-content:space-between;gap:1rem;
  padding-bottom:.85rem;border-bottom:1px solid var(--line);color:var(--accent)}
@@ -546,10 +553,21 @@ code{direction:ltr;display:inline-block;font-size:.9em;
 @media (max-width:40rem){html{background:#fff}body{font-size:.98rem;line-height:1.95;
  margin:0 auto;padding:1.2rem;box-shadow:none}h1{font-size:1.3rem}.brand-logo{width:3.4rem;height:3.4rem}
  a.pn{display:none}.print-tools span{display:none}}
-@page{size:A4;margin:17mm 18mm 19mm 18mm}
+@page{size:A4;margin:18mm 20mm 20mm 20mm}
 @media print{
- html,body{background:#fff}
- body{max-width:none;margin:0;padding:0;font-size:10.5pt;line-height:1.82;box-shadow:none;color:#111}
+ html,body{background:#fff;width:auto!important;min-width:0!important;max-width:100%!important;
+  margin:0!important;padding:0!important;overflow:visible!important}
+ body{font-size:10.25pt;line-height:1.78;box-shadow:none;color:#111;text-align:justify}
+ main,header,nav,section,article,div,p,ol,li,figure,figcaption{min-width:0;max-width:100%}
+ .brand{width:100%}.brand-logo{width:17mm;height:17mm}
+ .eq{width:100%;max-width:100%;overflow:hidden;font-size:9.2pt}
+ mjx-container{font-weight:400!important;color:#182230!important}
+ mjx-container[jax="SVG"][display="true"]{font-size:.88em!important;overflow:hidden!important}
+ mjx-container[jax="SVG"][display="true"] svg{max-width:100%!important;height:auto!important}
+ table{width:100%;max-width:100%;table-layout:fixed}
+ th,td{padding:1.5mm 2mm}
+ ol.refs{max-width:100%;padding-inline-start:6mm}
+ ol.refs li,ol.refs a{overflow-wrap:anywhere;word-break:break-word}
  .article-head{border-top:5px solid var(--accent);margin-bottom:8mm}
  h1{font-size:17pt;line-height:1.65;margin:7mm auto 4mm}
  h2{font-size:13pt;margin-top:8mm;break-after:avoid-page;page-break-after:avoid}
@@ -658,7 +676,7 @@ def main():
         mj = MATHJAX_CDN
         print('MathJax: از CDN (برای نسخه‌ی آفلاین:'
               ' python tools/vendor_mathjax.py)')
-    logo_uri = image_data_uri('assets/university-isfahan-logo-green.png')
+    logo_uri = image_data_uri('assets/university-isfahan-logo.png')
     for k, v in (('@@T@@', inline(title)), ('@@LOGO@@', logo_uri),
                  ('@@AU@@', inline(authors)), ('@@AFF@@', inline(affiliation)),
                  ('@@ADV@@', inline(advisor)),
