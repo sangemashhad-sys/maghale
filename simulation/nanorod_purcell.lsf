@@ -1,0 +1,379 @@
+# ===================================================================
+#  nanorod_purcell.lsf
+#  شبیه‌سازی FDTD سه‌بعدی: گسیل‌گر دوقطبی نقطه‌ای در مجاورت نانومیله‌ی
+#  طلا با کلاهک‌های نیم‌کروی — استخراج فاکتور پورسل، توان تابشی دوربرد،
+#  بازده تابشی و نقشه‌ی میدان نزدیک.
+#
+#  اجرا در Lumerical FDTD:
+#     File > Run Script...   یا در پنجره‌ی اسکریپت:  nanorod_purcell;
+#  یا از خط فرمان ویندوز:
+#     "C:\Program Files\Lumerical\v###\bin\fdtd-solutions.exe" -run nanorod_purcell.lsf
+#
+#  خروجی‌ها (در همان پوشه‌ی این اسکریپت):
+#     spectra.csv        → lambda_nm, Fp, T, eta_a
+#     nearfield.csv      → نقشه‌ی |E|^2 در صفحه‌ی y=0
+#     nearfield_axes.csv → محورهای x و z نقشه‌ی بالا (نانومتر)
+#     peaks.csv          → مقادیر قله‌ها برای درج در متن مقاله
+#     nanorod_purcell.fsp→ فایل پروژه‌ی ذخیره‌شده
+#
+#  سپس روی ویندوز:  python simulation\make_figures.py
+#  که هر سه شکل مقاله را در manuscript\figures\ می‌سازد.
+# ===================================================================
+
+newproject;
+switchtolayout;
+deleteall;
+clear;
+
+# -------------------------------------------------------------------
+#  ۱) پارامترهای هندسی و طیفی  (تنها بخشی که لازم است تغییر دهید)
+# -------------------------------------------------------------------
+nm = 1e-9;
+
+# --- هندسه: همان مقادیر اجرای گزارش‌شده در مقاله -------------------
+#  استوانه‌ی میانی z span = 40nm به‌همراه دو کلاهک نیم‌کروی به شعاع 10nm
+#  در z = ±20nm، پس طول کل = 40 + 10 + 10 = 60nm و نسبت منظری = 3.
+L_total = 60*nm;   # طول کل نانومیله شامل دو کلاهک نیم‌کروی
+D_rod   = 20*nm;   # قطر نانومیله
+d_gap   =  5*nm;   # فاصله‌ی دوقطبی از راس کلاهک (مطابق متن مقاله)
+
+lam_min = 450*nm;  # بازه‌ی طیفی شبیه‌سازی
+lam_max = 800*nm;
+n_freq  = 401;     # تعداد نقاط طیفی مانیتورها
+
+mesh_acc   = 3;      # دقت مش سراسری (۱ تا ۸)
+dx_fine    = 2*nm;   # گام مش موضعی روی میله و ناحیه‌ی گپ (اجرای گزارش‌شده)
+mesh_span_xy = 40*nm;  # ابعاد ناحیه‌ی Mesh Override
+mesh_span_z  = 80*nm;
+use_gap_mesh = 0;    # ۰ = همان یک ناحیه‌ی مش ۲ نانومتری اجرای گزارش‌شده
+                     # ۱ = افزودن ناحیه‌ی مش نصف‌گام در گپ (آزمون همگرایی)
+
+fdtd_span  = 600*nm; # ضلع مکعب ناحیه‌ی محاسباتی FDTD (با PML)
+box_span   = 400*nm; # ضلع مکعب مانیتور توان trans_box
+sim_time   = 300e-15;# زمان شبیه‌سازی؛ برای پلاسمون اتلافی کافی است
+pml_layers = 12;     # تعداد لایه‌های PML
+
+use_symmetry = 0;    # ۰ = بدون تقارن (مطمئن). راهنمای فعال‌سازی: بخش ۴
+
+# --- کمیت‌های مشتق‌شده ------------------------------------------------
+R_cap  = D_rod/2;              # شعاع کلاهک نیم‌کروی = D/2
+L_body = L_total - 2*R_cap;    # طول بخش استوانه‌ای
+z_tip  = L_total/2;            # مکان راس کلاهک بالایی روی محور z
+z_dip  = z_tip + d_gap;        # مکان دوقطبی
+
+if (L_body <= 0) {
+    ?"خطا: L_total باید بزرگ‌تر از D_rod باشد (طول کل شامل دو کلاهک است).";
+    break;
+}
+
+?"--- هندسه ---";
+?"L_total = " + num2str(L_total/nm) + " nm";
+?"D_rod   = " + num2str(D_rod/nm)   + " nm";
+?"R_cap   = " + num2str(R_cap/nm)   + " nm";
+?"L_body  = " + num2str(L_body/nm)  + " nm  (بخش استوانه‌ای)";
+?"z_dip   = " + num2str(z_dip/nm)   + " nm  (فاصله‌ی گپ " + num2str(d_gap/nm) + " nm)";
+
+# -------------------------------------------------------------------
+#  ۲) مواد — طلا بر پایه‌ی داده‌های تجربی جانسون و کریستی
+# -------------------------------------------------------------------
+mat_gold = "Au (Gold) - Johnson and Christy";
+if (!materialexists(mat_gold)) {
+    # نام مدخل در نسخه‌های مختلف کتابخانه کمی متفاوت است
+    mat_gold = "Au (Gold) - Johnson and Christy 1972";
+}
+if (!materialexists(mat_gold)) {
+    ?"هشدار: مدخل جانسون و کریستی یافت نشد؛ از Au (Gold) - CRC استفاده می‌شود.";
+    ?"        این با متن بخش روش‌شناسی مقاله ناسازگار است — اصلاح کنید.";
+    mat_gold = "Au (Gold) - CRC";
+}
+?"مادهٔ طلا: " + mat_gold;
+
+# -------------------------------------------------------------------
+#  ۳) ساخت نانومیله = استوانه + دو کلاهک نیم‌کروی
+#     (کلاهک با کره‌ی کامل ساخته می‌شود؛ اشتراک با استوانه بی‌اثر است
+#      چون هر دو از یک ماده‌اند و mesh order یکسان دارند.)
+# -------------------------------------------------------------------
+addcircle;
+set("name", "rod_body");
+set("material", mat_gold);
+set("radius", R_cap);
+set("x", 0);  set("y", 0);
+set("z", 0);
+set("z span", L_body);
+
+addsphere;
+set("name", "cap_top");
+set("material", mat_gold);
+set("radius", R_cap);
+set("x", 0);  set("y", 0);
+set("z", L_body/2);
+
+addsphere;
+set("name", "cap_bottom");
+set("material", mat_gold);
+set("radius", R_cap);
+set("x", 0);  set("y", 0);
+set("z", -L_body/2);
+
+# سه جزء بالا عمداً گروه‌بندی نشده‌اند: در Lumerical، گروه‌بندی مختصات
+# اجزا را نسبی می‌کند و اگر بعداً بخواهید هندسه را جابه‌جا کنید منبع
+# اشتباه است. هر سه از یک ماده‌اند، پس اشتراک حجمی‌شان بی‌اثر است.
+
+# -------------------------------------------------------------------
+#  ۴) ناحیه‌ی محاسباتی FDTD
+#     مکعبی به ضلع fdtd_span (۶۰۰ نانومتر در اجرای گزارش‌شده). فاصله‌ی
+#     مرزها تا ساختار بیش از نیمِ بزرگ‌ترین طول‌موج است تا PML میدان
+#     تبهگن را نبُرد؛ فاصله‌ی مرز PML تا مانیتور توان هم ۱۰۰ نانومتر است.
+# -------------------------------------------------------------------
+addfdtd;
+set("dimension", "3D");           # رشته، نه عدد — بین نسخه‌ها پایدارتر است
+set("x", 0);        set("x span", fdtd_span);
+set("y", 0);        set("y span", fdtd_span);
+set("z", 0);
+set("z span", fdtd_span);
+set("mesh accuracy", mesh_acc);
+set("simulation time", sim_time);
+set("pml layers", pml_layers);
+set("pml profile", 1);            # 1 = standard
+set("background index", 1.0);     # هوا، مطابق متن مقاله
+
+# تقارن: دوقطبی در راستای z است، پس مدهای x و y آینه‌ای‌اند.
+# فعال‌سازی، زمان اجرا را ~۴ برابر کم می‌کند اما اگر بعداً دوقطبی را
+# بچرخانید نتیجه غلط می‌شود. پیش‌فرض: خاموش.
+if (use_symmetry) {
+    set("x min bc", "Anti-Symmetric");   # Ez dipole → Anti-Symmetric در x
+    set("y min bc", "Anti-Symmetric");
+    ?"تقارن فعال است — تنها برای دوقطبی z معتبر.";
+}
+
+# -------------------------------------------------------------------
+#  ۵) مش موضعی ریز روی میله و ناحیه‌ی گپ
+#     اجرای گزارش‌شده‌ی مقاله: یک ناحیه‌ی 40×40×80 نانومتر با گام ۲ نانومتر
+#     که هم نانومیله و هم محل دوقطبی را می‌پوشاند.
+# -------------------------------------------------------------------
+addmesh;
+set("name", "mesh_rod");
+set("x", 0);  set("x span", mesh_span_xy);
+set("y", 0);  set("y span", mesh_span_xy);
+set("z", (0 + z_dip)/2);
+set("z span", mesh_span_z);
+set("override x mesh", 1);  set("dx", dx_fine);
+set("override y mesh", 1);  set("dy", dx_fine);
+set("override z mesh", 1);  set("dz", dx_fine);
+
+# مش نصف‌گام در خودِ گپ ۵ نانومتری: گرادیان میدان اینجا شدیدترین است.
+# در اجرای گزارش‌شده فعال نبود؛ برای آزمون همگرایی use_gap_mesh = 1 کنید.
+if (use_gap_mesh) {
+    addmesh;
+    set("name", "mesh_gap");
+    set("x", 0);  set("x span", 16*nm);
+    set("y", 0);  set("y span", 16*nm);
+    set("z", z_tip + d_gap/2);
+    set("z span", d_gap + 6*nm);
+    set("override x mesh", 1);  set("dx", dx_fine/2);
+    set("override y mesh", 1);  set("dy", dx_fine/2);
+    set("override z mesh", 1);  set("dz", dx_fine/2);
+    ?"مش نصف‌گام در گپ فعال است — نتیجه با اجرای گزارش‌شده یکسان نیست.";
+}
+
+# -------------------------------------------------------------------
+#  ۶) چشمه: دوقطبی الکتریکی نقطه‌ای با قطبش موازی محور میله
+#     در Lumerical، جهت دوقطبی با theta/phi تعیین می‌شود:
+#        theta = 0  → ممان دوقطبی در راستای +z  (طولی، همین‌جا)
+#        theta = 90 → در راستای x یا y (عرضی)
+# -------------------------------------------------------------------
+adddipole;
+set("name", "dipole");
+set("dipole type", "Electric Dipole");
+set("x", 0);  set("y", 0);
+set("z", z_dip);
+set("theta", 0);            # قطبش طولی — مطابق بخش روش‌شناسی مقاله
+set("phi", 0);
+set("wavelength start", lam_min);
+set("wavelength stop",  lam_max);
+
+# -------------------------------------------------------------------
+#  ۷) مانیتورها
+# -------------------------------------------------------------------
+#  ۷.۱ جعبه‌ی توان دوربرد: شش وجه بسته، خارج از میله و خارج از مش ریز.
+#      نکته‌ی مهم: جعبه باید هم میله و هم دوقطبی را در بر بگیرد، وگرنه
+#      شار عبوری معنای «توان تابشی کل» را نمی‌دهد. مکعب ۴۰۰ نانومتری
+#      اجرای گزارش‌شده هر دو را می‌پوشاند و ۱۰۰ نانومتر از PML فاصله دارد.
+addpower;
+set("name", "trans_box");
+# نوع مانیتور را با رشته تعیین می‌کنیم نه عدد: شماره‌گذاری عددی
+# monitor type بین نسخه‌های Lumerical یکسان نیست و خطای خاموش می‌سازد.
+set("monitor type", "3D");
+set("x", 0);  set("x span", box_span);
+set("y", 0);  set("y span", box_span);
+set("z", 0);
+set("z span", box_span);
+set("override global monitor settings", 1);
+set("use wavelength spacing", 1);
+set("frequency points", n_freq);
+
+#  ۷.۲ نقشه‌ی میدان نزدیک در صفحه‌ی تقارن y=0 (برای شکل ۳)
+addprofile;
+set("name", "nearfield_xz");
+set("monitor type", "2D Y-normal");
+set("x", 0);  set("x span", D_rod + 60*nm);
+set("y", 0);
+set("z", (0 + z_dip)/2);
+set("z span", L_total + 2*d_gap + 60*nm);
+set("override global monitor settings", 1);
+set("use wavelength spacing", 1);
+set("frequency points", n_freq);
+
+#  ۷.۳ جعبه‌ی جذب درون فلز — کنترل مستقل موازنه‌ی انرژی.
+#      اگر  Fp − T  با این عدد نخواند، مش یا جعبه هنوز همگرا نشده است.
+addpower;
+set("name", "abs_box");
+set("monitor type", "3D");
+set("x", 0);  set("x span", D_rod + 6*nm);
+set("y", 0);  set("y span", D_rod + 6*nm);
+set("z", 0);  set("z span", L_total + 6*nm);
+set("override global monitor settings", 1);
+set("use wavelength spacing", 1);
+set("frequency points", n_freq);
+
+# -------------------------------------------------------------------
+#  ۸) اجرا
+# -------------------------------------------------------------------
+save("nanorod_purcell");
+?"شروع اجرا... (بسته به سیستم، ده‌ها دقیقه)";
+run;
+?"اجرا تمام شد.";
+
+# ===================================================================
+#  ۹) استخراج کمیت‌ها
+#  ---------------------------------------------------------------
+#  تعریف‌ها بر پایه‌ی روابط بخش روش‌شناسی مقاله:
+#
+#    P_0    = sourcepower(f)    توان دوقطبی در فضای همگن (مرجع بهنجارش)
+#    P_tot  = dipolepower(f)    توان واقعی گسیل‌شده = کار میدان واکنشی
+#    Fp     = P_tot / P_0       رابطه‌ی (eq:Fp)
+#    T      = P_rad / P_0       رابطه‌ی (eq:T)  ← transmission() از پیش
+#                               بر sourcepower بهنجار شده است
+#    eta_a  = T / Fp            رابطه‌ی (eq:eta)
+#
+#  چرا dipolepower و نه sourcepower برای P_tot؟ چون sourcepower فقط
+#  طیف تحریک را می‌دهد و به محیط بی‌اعتناست؛ dipolepower توان واقعیِ
+#  تزریق‌شده در حضور نانوساختار است. نسبت این دو دقیقاً فاکتور پورسل
+#  است و به هیچ مانیتور بیرونی نیاز ندارد.
+# ===================================================================
+f      = getdata("trans_box", "f");
+lam_nm = c/f/nm;
+
+P0    = sourcepower(f);
+Ptot  = dipolepower(f);
+
+Fp    = Ptot / P0;
+T     = transmission("trans_box");     # نسبت به sourcepower، بی‌بعد
+eta_a = T / Fp;
+
+# جذب درون فلز: شار ورودی به جعبه‌ی چسبیده به میله.
+# transmission() شار خروجی مثبت است، پس جذب = منفی آن.
+A_metal = -transmission("abs_box");
+
+# --- موازنه‌ی انرژی: کنترل کیفیت -------------------------------------
+#  انتظار: Fp ≈ T + A_metal. خطای بزرگ‌تر از چند درصد یعنی مش هنوز
+#  همگرا نشده یا جعبه‌ها بد جای‌گذاری شده‌اند.
+balance_err = abs(Fp - T - A_metal) / Fp * 100;
+
+# --- قله‌ها -----------------------------------------------------------
+iFp = find(Fp, max(Fp));
+iT  = find(T,  max(T));
+
+Fp_max      = Fp(iFp);
+lam_Fp      = lam_nm(iFp);
+T_max       = T(iT);
+lam_T       = lam_nm(iT);
+eta_at_res  = eta_a(iFp);
+loss_at_res = Fp(iFp) - T(iFp);
+red_shift   = lam_T - lam_Fp;
+
+?" ";
+?"=========== نتایج کلیدی ===========";
+?"Fp_max        = " + num2str(Fp_max)     + "  @ " + num2str(lam_Fp) + " nm";
+?"T_max         = " + num2str(T_max)      + "  @ " + num2str(lam_T)  + " nm";
+?"جابه‌جایی سرخ = " + num2str(red_shift)  + " nm";
+?"eta_a در تشدید Fp = " + num2str(eta_at_res*100) + " %";
+?"Fp - T در تشدید   = " + num2str(loss_at_res);
+?"خطای موازنه‌ی انرژی (میانه) = " + num2str(median(balance_err)) + " %";
+if (median(balance_err) > 5) {
+    ?"هشدار: موازنه‌ی انرژی بیش از ۵٪ خطا دارد.";
+    ?"        mesh_acc یا dx_fine را ریزتر و sim_time را بلندتر کنید.";
+}
+
+# ===================================================================
+#  ۱۰) نوشتن خروجی‌ها به CSV
+#      متن فارسی در فایل‌ها نوشته نمی‌شود؛ سرستون‌ها انگلیسی‌اند تا
+#      pandas بی‌دردسر بخواند.
+# ===================================================================
+dir_out = filedirectory(currentfilename);
+if (dir_out == "") { dir_out = pwd; }
+
+# --- ۱۰.۱ طیف‌ها -----------------------------------------------------
+fn = dir_out + "/spectra.csv";
+if (fileexists(fn)) { rm(fn); }   # rm روی فایل ناموجود هشدار می‌دهد
+write(fn, "lambda_nm,Fp,T,eta_a,A_metal");
+for (k = 1:length(lam_nm)) {
+    write(fn, num2str(lam_nm(k))     + "," +
+              num2str(Fp(k))         + "," +
+              num2str(T(k))          + "," +
+              num2str(eta_a(k))      + "," +
+              num2str(A_metal(k)));
+}
+?"نوشته شد: spectra.csv";
+
+# --- ۱۰.۲ قله‌ها (برای درج در متن مقاله) -----------------------------
+fn = dir_out + "/peaks.csv";
+if (fileexists(fn)) { rm(fn); }
+write(fn, "quantity,value,unit");
+write(fn, "Fp_max,"            + num2str(Fp_max)          + ",-");
+write(fn, "lambda_Fp,"         + num2str(lam_Fp)          + ",nm");
+write(fn, "T_max,"             + num2str(T_max)           + ",-");
+write(fn, "lambda_T,"          + num2str(lam_T)           + ",nm");
+write(fn, "red_shift,"         + num2str(red_shift)       + ",nm");
+write(fn, "eta_a_at_Fp_peak,"  + num2str(eta_at_res)      + ",-");
+write(fn, "loss_at_Fp_peak,"   + num2str(loss_at_res)     + ",-");
+write(fn, "L_total,"           + num2str(L_total/nm)      + ",nm");
+write(fn, "D_rod,"             + num2str(D_rod/nm)        + ",nm");
+write(fn, "R_cap,"             + num2str(R_cap/nm)        + ",nm");
+write(fn, "d_gap,"             + num2str(d_gap/nm)        + ",nm");
+write(fn, "mesh_accuracy,"     + num2str(mesh_acc)        + ",-");
+write(fn, "dx_fine,"           + num2str(dx_fine/nm)      + ",nm");
+write(fn, "balance_err_median," + num2str(median(balance_err)) + ",percent");
+?"نوشته شد: peaks.csv";
+
+# --- ۱۰.۳ نقشه‌ی میدان نزدیک در طول‌موج تشدید ------------------------
+#  |E|^2 در صفحه‌ی y=0. آرایه‌ی getelectric ابعاد (x,y,z,f) دارد؛
+#  چون مانیتور y-normal است بُعد y طول ۱ دارد و pinch حذفش می‌کند.
+x_nf  = getdata("nearfield_xz", "x") / nm;
+z_nf  = getdata("nearfield_xz", "z") / nm;
+E2    = getelectric("nearfield_xz");           # (x,1,z,f)
+E2res = pinch(pinch(E2, 4, iFp), 2);           # → (x,z) در قله‌ی Fp
+
+fn = dir_out + "/nearfield_axes.csv";
+if (fileexists(fn)) { rm(fn); }
+write(fn, "axis,values_nm");
+write(fn, "x," + replacestring(num2str(x_nf), endl, " "));
+write(fn, "z," + replacestring(num2str(z_nf), endl, " "));
+?"نوشته شد: nearfield_axes.csv";
+
+#  ماتریس |E|^2: هر سطر یک x، هر ستون یک z
+fn = dir_out + "/nearfield.csv";
+if (fileexists(fn)) { rm(fn); }
+for (ix = 1:length(x_nf)) {
+    row = "";
+    for (iz = 1:length(z_nf)) {
+        if (iz == 1) { row = num2str(E2res(ix, iz)); }
+        else         { row = row + "," + num2str(E2res(ix, iz)); }
+    }
+    write(fn, row);
+}
+?"نوشته شد: nearfield.csv";
+
+?" ";
+?"همه‌ی خروجی‌ها در: " + dir_out;
+?"گام بعد روی ویندوز:  python simulation\\make_figures.py";

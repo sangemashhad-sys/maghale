@@ -1,0 +1,10 @@
+tex files: 6
+missing \input targets: none
+bib entries: 27 ; cited keys: 27
+undefined cite keys: none
+bib entries never cited: none
+references.bib matches draft/: True
+dangling \ref targets: none
+fig/tab/eq labels never referenced: none
+unreferenced section labels (informational): ['sec:conclusion', 'sec:intro', 'sec:method', 'sec:results', 'sec:results-efficiency', 'sec:results-nearfield', 'sec:results-purcell', 'sec:results-radiated', 'sec:theory', 'sec:theory-distinction', 'sec:theory-origin', 'sec:theory-symmetry']
+math macros used outside math mode: none

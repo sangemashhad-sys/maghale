@@ -1,0 +1,21 @@
+DEFINED: 27
+USED: 15
+
+MISSING (cited but not in .bib): none
+UNUSED in draft/*.md (expected: the 8 keys already cited by
+the existing article body, which is not a draft/*.md file):
+    alhamaidah2023synthesis
+    babicheva2023optical
+    bagheriharouni2010wetting
+    bharadwaj2009optical
+    carminati2000light
+    chen2009subwavelength
+    johnson1972optical
+    koenderink2017single
+    maier2007plasmonics
+    purcell1946spontaneous
+    taflove2005computational
+    xu2023quantum
+BRACES balanced: True
+placeholders [مرجع]: 0
+duplicate keys: none

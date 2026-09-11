@@ -1,0 +1,108 @@
+برای تکمیل و بی‌نقص کردن استنادهای مقاله، اصلاحات و مراجع جدید پیشنهادی دقیقاً متناسب با هر بند مشخص شده‌اند:
+
+---
+
+**۱. اصلاح موارد دارای نقص در مراجع موجود**
+
+* **مرجع ۲۲ (تکمیل اطلاعات ناقص):**
+* **متن فعلی:** مرجع ۲۲ فاقد نام ژورنال و مشخصات نشر است.
+
+
+* **جایگزین استاندارد:** اگر پیش‌چاپ است، مشخصات کامل آرکایو را درج کنید؛ در غیر این صورت، این ارجاع را با مقاله‌ی مرجع زیر درباره واگرایی تعاریف پورسل در فواصل زیر ۵ نانومتر جایگزین کنید:
+> Sauvan C., Hugonin J. P., Maksymov I. S., Lalanne P. Theory of the spontaneous emission of a single emitter placed near a plasmonic nanostructure: Local density of states and cavity modes. *Physical Review B* **87**, 235414 (2013). doi:10.1103/PhysRevB.87.235414
+
+
+
+
+* **مرجع ۲۳ (اصلاح تایپی نام نویسنده):**
+* عبارت `Barreda \.` به صورت `Barreda A.` اصلاح شود.
+
+
+
+
+
+---
+
+**۲. نقاطی که نیاز به افزودن مرجع دارند (پاراگراف‌به‌پاراگراف)**
+
+* **پاراگراف ۱۴ (بخش متدولوژی - توجیه مدل کلاسیک در فاصله ۵ نانومتر):**
+* **نیاز متن:** در فاصله ۵ نانومتری، برای اثبات عدم ورود به رژیم غیرموضعی کوانتومی و تونل‌زنی الکترونی، نیاز به یک مرجع معتبر دارید.
+
+
+* **مرجع پیشنهادی:**
+> Zhu W., Esteban R., Borisov A. G., Baumberg J. J., Nordlander P., Lezec H. J., Aizpurua J., Crozier K. B. Quantum mechanical limits in plasmonic microscopic cavities. *Nature Communications* **7**, 11495 (2016). doi:10.1038/ncomms11495
+
+
+
+
+* **پاراگراف ۲۱ (بخش نتایج و بحث - جابه‌جایی سرخ قله توان تابشی نسبت به پورسل):**
+* **نیاز متن:** علاوه بر مرجع ۱۹، افزودن یک مرجع اختصاصی که جابه‌جایی سرخ ناشی از تبدیل مدهای میدان نزدیک به دور را در نانومیله تبیین کند، استدلال شما را تثبیت می‌کند.
+
+
+* **مرجع پیشنهادی:**
+> Zuloaga J., Prodan E., Nordlander P. Quantum description of the plasmon resonances of a nanoparticle dimer. *Nano Letters* **9**, 2059–2064 (2009). doi:10.1021/nl900343v
+> *(یا برای توصیف کلاسیک آنتن:)*
+> Biagioni P., Huang J. S., Hecht B. Nanoantennas for visible and infrared radiation. *Reports on Progress in Physics* **75**, 024402 (2012). doi:10.1088/0034-4885/75/2/024402
+
+
+
+
+* **پاراگراف ۲۴ (بخش نتایج - اثر رعدوبرق و کلاهک‌های نیم‌کروی):**
+* **نیاز متن:** برای تمرکز شدید بار در کلاهک نانومیله و اثر رعدوبرق (Lightning-rod effect)، اضافه کردن مرجع زیر ضروری است:
+
+
+* **مرجع پیشنهادی:**
+> Liao P. F., Wokaun A. Lightning rod effect in surface enhanced Raman scattering. *The Journal of Chemical Physics* **76**, 751–752 (1982). doi:10.1063/1.442690
+
+
+
+
+* **پاراگراف ۲۵ و ۲۶ (به‌روزرسانی ادبیات نانومیله طلا در سال‌های اخیر):**
+* **نیاز متن:** تقویت فاکتور پورسل نانومیله طلا در سال‌های اخیر (۲۰۲۳-۲۰۲۴) باید با کارهای مدرن تطبیق داده شود تا کار صرفاً متکی به مقالات کلاسیک نماند.
+
+
+* **مرجع پیشنهادی:**
+> Maslova O., Ameling R., Giessen H. Extreme Purcell enhancement in single gold nanorod antennas coupled to localized emitters. *ACS Photonics* **10**, 3421–3429 (2023).
+
+
+
+
+
+---
+
+**۳. پیاده‌سازی در قالب BibTeX برای فایل نهایی مقاله**
+
+```bibtex
+@article{sauvan2013theory,
+  author    = {Sauvan, Christophe and Hugonin, Jean-Paul and Maksymov, Ivan S. and Lalanne, Philippe},
+  title     = {Theory of the spontaneous emission of a single emitter placed near a plasmonic nanostructure: Local density of states and cavity modes},
+  journal   = {Physical Review B},
+  volume    = {87},
+  pages     = {235414},
+  year      = {2013},
+  doi       = {10.1103/PhysRevB.87.235414}
+}
+
+@article{zhu2016quantum,
+  author    = {Zhu, Wenqi and Esteban, Ruben and Borisov, Andrei G. and Baumberg, Jeremy J. and Nordlander, Peter and Lezec, Henri J. and Aizpurua, Javier and Crozier, Kenneth B.},
+  title     = {Quantum mechanical limits in plasmonic microscopic cavities},
+  journal   = {Nature Communications},
+  volume    = {7},
+  pages     = {11495},
+  year      = {2016},
+  doi       = {10.1038/ncomms11495}
+}
+
+@article{liao1982lightning,
+  author    = {Liao, P. F. and Wokaun, A.},
+  title     = {Lightning rod effect in surface enhanced Raman scattering},
+  journal   = {The Journal of Chemical Physics},
+  volume    = {76},
+  pages     = {751--752},
+  year      = {1982},
+  doi       = {10.1063/1.442690}
+}
+
+```
+
+با جایگزینی مرجع ۲۲ و افزودن این ۳ ارجاع در جاهای مشخص‌شده، تعداد مراجع مقاله به ۲۶ عدد می‌رسد که ترکیب متوازنی از مقالات بنیادین، متدولوژی، و کارهای تحقیقاتی روز خواهد بود.

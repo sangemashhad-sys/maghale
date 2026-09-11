@@ -1,0 +1,650 @@
+[
+  {
+    "file": "Purcell_Spectrum.orig.pdf",
+    "bytes": 181765,
+    "metadata": {
+      "format": "PDF 1.4",
+      "title": "VTK GL2PS Export",
+      "creator": "GL2PS 1.3.8, (C) 1999-2012 C. Geuzaine",
+      "producer": "VTK",
+      "creationDate": "D:20260828115915"
+    },
+    "page_rect": [
+      0.0,
+      0.0,
+      677.0,
+      426.0
+    ],
+    "n_images": 0,
+    "n_drawing_paths": 49,
+    "n_line_segments": 1371,
+    "n_bezier_segments": 1796,
+    "n_points_total": 9930,
+    "n_words": 0,
+    "words_sample": [],
+    "longest_paths": [
+      {
+        "n_items": 509,
+        "type": "s",
+        "color": [
+          0.3921569883823395,
+          0.7098039984703064,
+          0.9647060036659241
+        ],
+        "fill": null,
+        "width": 2.142859935760498,
+        "rect": [
+          61.6,
+          49.24,
+          303.87,
+          331.55
+        ]
+      },
+      {
+        "n_items": 425,
+        "type": "s",
+        "color": [
+          0.3921569883823395,
+          0.7098039984703064,
+          0.9647060036659241
+        ],
+        "fill": null,
+        "width": 2.142859935760498,
+        "rect": [
+          303.87,
+          331.55,
+          657.47,
+          366.5
+        ]
+      },
+      {
+        "n_items": 160,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          561.84,
+          390.42,
+          597.81,
+          398.42
+        ]
+      },
+      {
+        "n_items": 141,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          252.48,
+          390.42,
+          288.35,
+          398.42
+        ]
+      },
+      {
+        "n_items": 137,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          97.97,
+          390.42,
+          134.12,
+          398.42
+        ]
+      },
+      {
+        "n_items": 123,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          303.87,
+          403.43,
+          392.01,
+          417.68
+        ]
+      },
+      {
+        "n_items": 121,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          488.72,
+          390.42,
+          515.69,
+          398.42
+        ]
+      },
+      {
+        "n_items": 119,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          407.66,
+          390.42,
+          443.58,
+          398.42
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Purcell_Spectrum.pdf",
+    "bytes": 18780,
+    "metadata": {
+      "format": "PDF 1.4",
+      "title": "VTK GL2PS Export",
+      "creator": "GL2PS 1.3.8, (C) 1999-2012 C. Geuzaine",
+      "producer": "VTK",
+      "creationDate": "D:20260828115915"
+    },
+    "page_rect": [
+      0.0,
+      0.0,
+      677.0,
+      426.0
+    ],
+    "n_images": 0,
+    "n_drawing_paths": 49,
+    "n_line_segments": 1371,
+    "n_bezier_segments": 1796,
+    "n_points_total": 9930,
+    "n_words": 0,
+    "words_sample": [],
+    "longest_paths": [
+      {
+        "n_items": 509,
+        "type": "s",
+        "color": [
+          0.3921569883823395,
+          0.7098039984703064,
+          0.9647060036659241
+        ],
+        "fill": null,
+        "width": 2.142859935760498,
+        "rect": [
+          61.6,
+          49.24,
+          303.87,
+          331.55
+        ]
+      },
+      {
+        "n_items": 425,
+        "type": "s",
+        "color": [
+          0.3921569883823395,
+          0.7098039984703064,
+          0.9647060036659241
+        ],
+        "fill": null,
+        "width": 2.142859935760498,
+        "rect": [
+          303.87,
+          331.55,
+          657.47,
+          366.5
+        ]
+      },
+      {
+        "n_items": 160,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          561.84,
+          390.42,
+          597.81,
+          398.42
+        ]
+      },
+      {
+        "n_items": 141,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          252.48,
+          390.42,
+          288.35,
+          398.42
+        ]
+      },
+      {
+        "n_items": 137,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          97.97,
+          390.42,
+          134.12,
+          398.42
+        ]
+      },
+      {
+        "n_items": 123,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          303.87,
+          403.43,
+          392.01,
+          417.68
+        ]
+      },
+      {
+        "n_items": 121,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          488.72,
+          390.42,
+          515.69,
+          398.42
+        ]
+      },
+      {
+        "n_items": 119,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          407.66,
+          390.42,
+          443.58,
+          398.42
+        ]
+      }
+    ]
+  },
+  {
+    "file": "radiated_power_T.orig.pdf",
+    "bytes": 119813,
+    "metadata": {
+      "format": "PDF 1.4",
+      "title": "VTK GL2PS Export",
+      "creator": "GL2PS 1.3.8, (C) 1999-2012 C. Geuzaine",
+      "producer": "VTK",
+      "creationDate": "D:20260828115716"
+    },
+    "page_rect": [
+      0.0,
+      0.0,
+      677.0,
+      426.0
+    ],
+    "n_images": 0,
+    "n_drawing_paths": 41,
+    "n_line_segments": 343,
+    "n_bezier_segments": 1333,
+    "n_points_total": 6022,
+    "n_words": 0,
+    "words_sample": [],
+    "longest_paths": [
+      {
+        "n_items": 160,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          561.84,
+          391.42,
+          597.81,
+          399.42
+        ]
+      },
+      {
+        "n_items": 141,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          249.47,
+          391.42,
+          285.34,
+          399.42
+        ]
+      },
+      {
+        "n_items": 137,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          92.96,
+          391.42,
+          129.11,
+          399.42
+        ]
+      },
+      {
+        "n_items": 121,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          487.72,
+          391.42,
+          514.69,
+          399.42
+        ]
+      },
+      {
+        "n_items": 119,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          405.66,
+          391.42,
+          441.58,
+          399.42
+        ]
+      },
+      {
+        "n_items": 102,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          175.36,
+          391.42,
+          202.23,
+          399.42
+        ]
+      },
+      {
+        "n_items": 102,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          643.95,
+          391.42,
+          670.92,
+          399.42
+        ]
+      },
+      {
+        "n_items": 98,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          18.85,
+          391.42,
+          46.0,
+          399.42
+        ]
+      }
+    ]
+  },
+  {
+    "file": "radiated_power_T.pdf",
+    "bytes": 9925,
+    "metadata": {
+      "format": "PDF 1.4",
+      "title": "VTK GL2PS Export",
+      "creator": "GL2PS 1.3.8, (C) 1999-2012 C. Geuzaine",
+      "producer": "VTK",
+      "creationDate": "D:20260828115716"
+    },
+    "page_rect": [
+      0.0,
+      0.0,
+      677.0,
+      426.0
+    ],
+    "n_images": 0,
+    "n_drawing_paths": 41,
+    "n_line_segments": 343,
+    "n_bezier_segments": 1333,
+    "n_points_total": 6022,
+    "n_words": 0,
+    "words_sample": [],
+    "longest_paths": [
+      {
+        "n_items": 160,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          561.84,
+          391.42,
+          597.81,
+          399.42
+        ]
+      },
+      {
+        "n_items": 141,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          249.47,
+          391.42,
+          285.34,
+          399.42
+        ]
+      },
+      {
+        "n_items": 137,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          92.96,
+          391.42,
+          129.11,
+          399.42
+        ]
+      },
+      {
+        "n_items": 121,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          487.72,
+          391.42,
+          514.69,
+          399.42
+        ]
+      },
+      {
+        "n_items": 119,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          405.66,
+          391.42,
+          441.58,
+          399.42
+        ]
+      },
+      {
+        "n_items": 102,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          175.36,
+          391.42,
+          202.23,
+          399.42
+        ]
+      },
+      {
+        "n_items": 102,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          643.95,
+          391.42,
+          670.92,
+          399.42
+        ]
+      },
+      {
+        "n_items": 98,
+        "type": "f",
+        "color": null,
+        "fill": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "width": null,
+        "rect": [
+          18.85,
+          391.42,
+          46.0,
+          399.42
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,42 @@
+DOI      : 10.1039/d5ra04583e
+type     : journal-article
+title    : Tuning the spontaneous emission of CdTe quantum dots with hybrid silicon–gold nanogaps
+journal  : RSC Advances
+volume   : 15
+issue    : 35
+page     : 29053-29062
+art-num  : None
+year     : [[2025]]
+publisher: Royal Society of Chemistry (RSC)
+authors  : Al-hamadani, Areeg; Al-Dulami, Ali; Bartschmid, Theresa; Menath, Johannes; Muravitskaya, Alina; Vogel, Nicolas; Bourret, Gilles R.; Bouillard, Jean-Sebastien G.; Adawi, Ali M.
+updates  : []
+updated-by: [('correction', '10.1039/d5ra90101d')]
+
+DOI      : 10.1039/d5ra90101d
+type     : journal-article
+title    : Correction: Tuning the spontaneous emission of CdTe quantum dots with hybrid silicon–gold nanogaps
+journal  : RSC Advances
+volume   : 15
+issue    : 39
+page     : 32117-32117
+art-num  : None
+year     : [[2025]]
+publisher: Royal Society of Chemistry (RSC)
+authors  : Al-hamadani, Areeg; Al-Dulaimi, Ali; Bartschmid, Theresa; Menath, Johannes; Muravitskaya, Alina; Vogel, Nicolas; Bourret, Gilles R.; Bouillard, Jean-Sebastien G.; Adawi, Ali M.
+updates  : [('correction', '10.1039/d5ra04583e')]
+updated-by: []
+
+DOI      : 10.1002/adpr.202100286
+type     : journal-article
+title    : Applications of Hybrid Metal‐Dielectric Nanostructures: State of the Art
+journal  : Advanced Photonics Research
+volume   : 3
+issue    : 4
+page     : None
+art-num  : 2100286
+year     : [[2022, 1, 17]]
+publisher: Wiley
+authors  : Barreda, Ángela; Vitale, Francesco; Minovich, Alexander E.; Ronning, Carsten; Staude, Isabelle
+updates  : []
+updated-by: []
+

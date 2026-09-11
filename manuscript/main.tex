@@ -1,0 +1,166 @@
+% !TEX program = xelatex
+% ===================================================================
+%  مقاله: بررسی عددی تقویت گسیل خودبه‌خودی و راندمان تابشی گسیل‌گر
+%  کوانتومی در مجاورت نانومیله پلاسمونی طلا با روش 3D-FDTD
+%  ---------------------------------------------------------------
+%  کامپایل: xelatex main → biber main → xelatex main → xelatex main
+%  یا به‌سادگی:  latexmk -xelatex main.tex
+%
+%  این فایل، متن موجود مقاله را با بخش‌های نوِ پیش‌نویس ادغام می‌کند:
+%    - draft/abstract_and_title.md      → عنوان، چکیده، کلیدواژه‌ها
+%    - draft/section1_intro_addition.md → دو پاراگراف پایانی بخش ۱
+%    - draft/section2.md               → بخش ۲ (کاملاً نو)
+%    - draft/section45_and_conclusion.md → زیربخش ۴.۵ + نتیجه‌گیری
+%  نگاشت بخش‌ها در evidence/integration_plan.md آمده است.
+% ===================================================================
+\documentclass[12pt,a4paper]{article}
+
+% --- ریاضیات (پیش از xepersian بارگذاری شود) -----------------------
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% --- گرافیک، جدول، پیوند ------------------------------------------
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{xcolor}
+
+% --- کتاب‌نامه: biblatex با سبک عددی ------------------------------
+\usepackage[
+  backend=biber,
+  style=numeric-comp,
+  sorting=none,          % ترتیب ظهور در متن
+  maxbibnames=99,
+  giveninits=true,
+  doi=true,
+  isbn=false,
+  url=false
+]{biblatex}
+\addbibresource{references.bib}
+
+% --- پیوندها (پیش از xepersian) -----------------------------------
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = black,
+  citecolor  = blue!55!black,
+  urlcolor   = blue!55!black,
+  pdftitle   = {Numerical study of spontaneous emission enhancement near a gold plasmonic nanorod},
+  pdfauthor  = {}
+}
+
+% --- فارسی‌نویسی: xepersian باید آخرین بستهٔ بارگذاری‌شده باشد -------
+\usepackage{xepersian}
+
+% انتخاب قلم: وزیرمتن قلم مرجع متن است. فایل‌های .ttf آن در پوشه‌ی
+% manuscript/fonts کنار همین فایل قرار دارد، پس نیازی به نصب قلم روی سیستم
+% نیست و در ویندوز و در تصویر داکر یکسان کامپایل می‌شود. اگر آن پوشه نبود،
+% سراغ نسخه‌ی نصب‌شده و سپس جانشین‌ها می‌رویم.
+% \IfFontExistsTF و Path/Extension از fontspec می‌آیند که xepersian خودش
+% بارگذاری می‌کند.
+\IfFileExists{fonts/Vazirmatn-Regular.ttf}{%
+  \settextfont[Path=fonts/, Extension=.ttf,
+               UprightFont=*-Regular, BoldFont=*-Bold, Scale=1.10]{Vazirmatn}%
+  \setdigitfont[Path=fonts/, Extension=.ttf,
+                UprightFont=*-Regular, BoldFont=*-Bold, Scale=1.10]{Vazirmatn}%
+}{%
+  \IfFontExistsTF{Vazirmatn}{%
+    \settextfont[Scale=1.10]{Vazirmatn}%
+    \setdigitfont{Vazirmatn}%
+  }{%
+    \IfFontExistsTF{XB Niloofar}{%
+      \settextfont[Scale=1.15]{XB Niloofar}%
+      \setdigitfont{XB Niloofar}%
+    }{%
+      \IfFontExistsTF{Noto Naskh Arabic}{%
+        \settextfont[Scale=1.10]{Noto Naskh Arabic}%
+        \setdigitfont{Noto Naskh Arabic}%
+      }{%
+        \GenericWarning{}{هيچ قلم فارسي يافت نشد؛ خروجي ناخوانا خواهد بود}%
+      }%
+    }%
+  }%
+}
+
+% قلم لاتین: Times New Roman روی ویندوز موجود است، در داکر نه.
+\IfFontExistsTF{Times New Roman}{%
+  \setlatintextfont[Scale=1.0]{Times New Roman}%
+}{%
+  \IfFontExistsTF{TeX Gyre Termes}{%
+    \setlatintextfont[Scale=1.0]{TeX Gyre Termes}%
+  }{}%
+}
+
+% اعداد داخل ریاضی لاتین بمانند (خواناتر برای کمیت‌های فیزیکی)
+\DefaultMathsDigits
+
+% --- تنظیم فاصله و سرفصل ------------------------------------------
+\linespread{1.35}
+\setlength{\parskip}{0.4em}
+\captionsetup{font=small,labelfont=bf}
+
+% --- میان‌بُرهای پرتکرار -------------------------------------------
+\newcommand{\Fp}{F_p}
+\newcommand{\nm}[1]{#1\,\text{nm}}
+
+\begin{document}
+
+% ===================================================================
+\title{بررسی عددی تقویت گسیل خودبه‌خودی و راندمان تابشی گسیل‌گر
+کوانتومی در مجاورت نانومیله پلاسمونی طلا با روش 3D-FDTD:
+محدودیت توصیف همسانگرد نرخ گسیل در هندسه‌های ناهمسانگرد}
+
+\author{}
+\date{}
+\maketitle
+
+% ===================================================================
+\begin{abstract}
+کنترل نرخ گسیل خودبه‌خودی و دستکاری فاکتور پورسل به کمک نانوساختارهای
+پلاسمونی، یکی از اصول بنیادین در توسعه چشمه‌های تک‌فوتونی و
+تقویت‌کننده‌های نانوفوتونیکی است. در این مقاله، برهم‌کنش الکترومغناطیسی
+میان یک گسیل‌گر دوقطبی نقطه‌ای و نانومیله پلاسمونی طلا با کلاهک‌های
+انتهایی نیم‌کروی با استفاده از روش تفاضل محدود در حوزه زمان (3D-FDTD)
+مدل‌سازی شده است. چشمه دوقطبی با پلاریزاسیون طولی در فاصله ۵ نانومتری از
+نوک نانومیله قرار گرفته و اثر مد پلاسمون سطحی موضعی (LSPR) بر نرخ واپاشی
+کل و توان تابشی میدان دور به دقت ارزیابی شده است. نتایج شبیه‌سازی نشان
+می‌دهد که فاکتور پورسل در طول‌موج تشدید
+$\lambda_{\text{res}} = \nm{607.9}$ به مقدار بیشینه
+$\Fp \approx 2020.48$ می‌رسد که بیانگر افزایش بیش از سه مرتبه بزرگی در
+نرخ واپاشی کل است. هم‌زمان، توان تابش‌شده به میدان دوردست نیز تقویتی
+بالغ بر ۱۴۳ برابر ($T_{\text{max}} = 143.42$) را در طول‌موج
+$\nm{615.1}$ با راندمان تابشی ظاهری $7.1\%$ به ثبت رسانده است.
+جابه‌جایی سرخ مشاهده‌شده میان قله پورسل و قله توان تابشی ناشی از پاشندگی
+اتلافی فلز و تبدیل مدهای میدان نزدیک به امواج منتشره است.
+%
+% >>> دو جمله‌ی افزودنی (کار ۱ / draft/abstract_and_title.md) <<<
+نامنطبق بودن این دو قله نشان می‌دهد که نرخ واپاشی کل و نرخ تابشی، دو
+کمیت با پاسخ طیفی مستقل‌اند و بنابراین با یک ضریب اسکالر واحد از نوع
+ضریب اینشتین قابل توصیف نیستند. بر این پایه استدلال می‌شود که
+توصیف‌های همسانگردِ برگرفته از تقارن کروی — از ضرایب اینشتین تا
+برچسب‌گذاری چندقطبی $l$ و $m$ — دامنه‌ی اعتبار محدودی دارند که هندسه‌ی
+ناهمسانگرد نانومیله آن را نقض می‌کند.
+%
+این نتایج درک دقیقی از رقابت میان راندمان تابشی و اثر خاموشی غیرتابشی
+(Quenching) ارائه داده و مسیر طراحی نانوآنتن‌های اپتیکی فشرده را هموار
+می‌سازد.
+\end{abstract}
+
+\noindent\textbf{کلمات کلیدی:} نانومیله طلا، پلاسمون سطحی موضعی (LSPR)،
+فاکتور پورسل، روش FDTD، راندمان تابشی، خاموشی غیرتابشی (Quenching)،
+ناهمسانگردی هندسی، دامنه‌ی اعتبار مدل، تقارن استوانه‌ای.
+
+\bigskip
+
+% ===================================================================
+\input{sections/01_introduction}
+\input{sections/02_theory}
+\input{sections/03_methodology}
+\input{sections/04_results}
+\input{sections/05_conclusion}
+
+% ===================================================================
+\printbibliography[title={مراجع}]
+
+\end{document}
