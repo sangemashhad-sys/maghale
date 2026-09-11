@@ -1,0 +1,194 @@
+# =============================================================================
+#   NANOROD_GEOMETRY_BUILDER.lsf  (نسخه‌ی امین — اجرا شده روی Lumerical 2024)
+#   فقط ساخت دقیق هندسه، دوقطبی، مش و مانیتورها (بدون ران یا سیو خودکار)
+#   منبع: کدی که امین اجرا کرد و خروجی‌های B/C/D/A را داد.
+#   برای حالت A (میله طولی): GEOM="rod" ، DIP_SIDE=0 ، DIP_THETA=0
+# =============================================================================
+switchtolayout;
+selectall;
+delete;
+
+# ----------------------------- تنظیمات دستی این اجرا -------------------------
+# هندسه: "rod" یا "sphere" یا "none"
+GEOM      = "rod";
+
+# مکان دوقطبی: 0 = روی نوک (محور z)  |  1 = کنار بدنه (محور x)
+DIP_SIDE  = 0;
+
+# زاویه دوقطبی: 0 = طولی (راستای z) |  90 = عرضی (راستای x)
+DIP_THETA = 0;
+
+# فاصله دوقطبی تا سطح نانوذره (متر)
+GAP       = 5e-9;
+
+# اندازه سلول‌های مش ریز در ناحیه نانوذره (متر)
+MESH_DX   = 2e-9;
+
+# شعاع کره در صورت انتخاب حالت sphere (متر)
+SPH_R     = 15.874e-9;
+
+# فعال بودن مانیتور ۲ بعدی میدان نزدیک: 1 = بله | 0 = خیر
+NF_ON     = 1;
+NF_LAM    = 610e-9;
+
+# ----------------------------- ابعاد و ثابت‌های فیزیکی ------------------------
+ROD_D     = 20e-9;
+ROD_LCYL  = 40e-9;      # طول کل میله = 60 nm
+FDTD_SPAN = 600e-9;
+BOX_SPAN  = 400e-9;
+LAM_MIN   = 500e-9;
+LAM_MAX   = 900e-9;
+NFREQ     = 201;
+SIM_TIME  = 300e-15;
+SHUTOFF   = 1e-5;
+MESH_ACC  = 3;
+MAT_AU    = "Au (Gold) - Johnson and Christy";
+
+# ----------------------------- محاسبه موقعیت‌ها ------------------------------
+R = ROD_D / 2;
+z_tip = ROD_LCYL / 2 + R;
+
+if (GEOM == "sphere") { z_tip = SPH_R; }
+if (GEOM == "none")   { z_tip = 0; }
+
+if (DIP_SIDE == 0) {
+    dip_x = 0;
+    dip_z = z_tip + GAP;
+} else {
+    dip_z = 0;
+    dip_x = R + GAP;
+    if (GEOM == "sphere") { dip_x = SPH_R + GAP; }
+}
+
+# ----------------------------- ساخت ساختار فلزی -----------------------------
+sx = 0;
+sz = 0;
+
+if (GEOM == "rod") {
+    # بدنه استوانه
+    addcircle;
+    set("name", "body");
+    set("x", 0); set("y", 0); set("z", 0);
+    set("radius", R);
+    set("z span", ROD_LCYL);
+    set("material", MAT_AU);
+
+    # کلاهک‌های نیم‌کره
+    addsphere;
+    set("name", "cap_top");
+    set("x", 0); set("y", 0); set("z", ROD_LCYL / 2);
+    set("radius", R);
+    set("material", MAT_AU);
+
+    addsphere;
+    set("name", "cap_bot");
+    set("x", 0); set("y", 0); set("z", -ROD_LCYL / 2);
+    set("radius", R);
+    set("material", MAT_AU);
+
+    sx = ROD_D;
+    sz = ROD_LCYL + ROD_D;
+}
+
+if (GEOM == "sphere") {
+    addsphere;
+    set("name", "nanosphere");
+    set("x", 0); set("y", 0); set("z", 0);
+    set("radius", SPH_R);
+    set("material", MAT_AU);
+
+    sx = 2 * SPH_R;
+    sz = 2 * SPH_R;
+}
+
+# ----------------------------- محیط محاسباتی FDTD ----------------------------
+addfdtd;
+set("dimension", "3D");
+set("x", 0); set("y", 0); set("z", 0);
+set("x span", FDTD_SPAN);
+set("y span", FDTD_SPAN);
+set("z span", FDTD_SPAN);
+set("mesh accuracy", MESH_ACC);
+set("simulation time", SIM_TIME);
+set("auto shutoff min", SHUTOFF);
+set("index", 1.0);
+set("x min bc", "PML"); set("x max bc", "PML");
+set("y min bc", "PML"); set("y max bc", "PML");
+set("z min bc", "PML"); set("z max bc", "PML");
+set("pml layers", 12);
+
+# ----------------------------- مش موضعی ریز (Mesh Override) ------------------
+MRG = 6e-9;
+mx = sx / 2 + MRG;
+mzmin = -sz / 2 - MRG;
+mzmax = sz / 2 + MRG;
+
+if (dip_x + MRG > mx)    { mx = dip_x + MRG; }
+if (dip_z + MRG > mzmax) { mzmax = dip_z + MRG; }
+if (GEOM == "none")      { mx = 20e-9; mzmin = -20e-9; mzmax = 20e-9; }
+
+addmesh;
+set("name", "mesh_fine");
+set("x min", -mx); set("x max", mx);
+set("y min", -mx); set("y max", mx);
+set("z min", mzmin); set("z max", mzmax);
+set("override x mesh", 1);
+set("override y mesh", 1);
+set("override z mesh", 1);
+set("dx", MESH_DX);
+set("dy", MESH_DX);
+set("dz", MESH_DX);
+
+# ----------------------------- چشمه دوقطبی الکتریکی --------------------------
+adddipole;
+set("name", "dipole");
+set("dipole type", "Electric dipole");
+set("x", dip_x); set("y", 0); set("z", dip_z);
+set("theta", DIP_THETA);
+set("phi", 0);
+set("wavelength start", LAM_MIN);
+set("wavelength stop", LAM_MAX);
+
+# ----------------------------- تنظیمات عمومی مانیتورها -----------------------
+setglobalmonitor("use source limits", 1);
+setglobalmonitor("use wavelength spacing", 1);
+setglobalmonitor("frequency points", NFREQ);
+
+# ----------------------------- جعبه ۶ وجهی توان پوئینتینگ ---------------------
+h_box = BOX_SPAN / 2;
+addpower; set("name", "box_x1"); set("monitor type", "2D X-normal"); set("x", -h_box);
+  set("y", 0); set("y span", BOX_SPAN); set("z", 0); set("z span", BOX_SPAN);
+addpower; set("name", "box_x2"); set("monitor type", "2D X-normal"); set("x",  h_box);
+  set("y", 0); set("y span", BOX_SPAN); set("z", 0); set("z span", BOX_SPAN);
+addpower; set("name", "box_y1"); set("monitor type", "2D Y-normal"); set("y", -h_box);
+  set("x", 0); set("x span", BOX_SPAN); set("z", 0); set("z span", BOX_SPAN);
+addpower; set("name", "box_y2"); set("monitor type", "2D Y-normal"); set("y",  h_box);
+  set("x", 0); set("x span", BOX_SPAN); set("z", 0); set("z span", BOX_SPAN);
+addpower; set("name", "box_z1"); set("monitor type", "2D Z-normal"); set("z", -h_box);
+  set("x", 0); set("x span", BOX_SPAN); set("y", 0); set("y span", BOX_SPAN);
+addpower; set("name", "box_z2"); set("monitor type", "2D Z-normal"); set("z",  h_box);
+  set("x", 0); set("x span", BOX_SPAN); set("y", 0); set("y span", BOX_SPAN);
+bn = {"box_x1", "box_x2", "box_y1", "box_y2", "box_z1", "box_z2"};
+for (i = 1:6) {
+    select(bn{i});
+    set("output Ex", 0); set("output Ey", 0); set("output Ez", 0);
+    set("output Hx", 0); set("output Hy", 0); set("output Hz", 0);
+    set("output power", 1);
+}
+
+# ----------------------------- مانیتور پروفایل میدان نزدیک -------------------
+if (NF_ON == 1) {
+    addprofile;
+    set("name", "nf_xz");
+    set("monitor type", "2D Y-normal");
+    set("y", 0);
+    set("x", 0); set("x span", 200e-9);
+    set("z", (mzmin + mzmax) / 2); set("z span", 200e-9);
+    set("override global monitor settings", 1);
+    set("use source limits", 0);
+    set("frequency points", 1);
+    set("wavelength center", NF_LAM);
+    set("wavelength span", 0);
+}
+
+?"Model built successfully! Ready to run manually.";

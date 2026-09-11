@@ -1,0 +1,119 @@
+# =============================================================================
+#   EXPORT_CASE_A.lsf  —  خروجی txt از حالت A (میله + دوقطبی طولی)
+#
+#   روش استفاده (Lumerical 2024):
+#     ۱) این فایل را با Save As کنار فایل .fsp ذخیره کن (مهم!)
+#     ۲) بعد از پایان Run حالت A، همین فایل را Run کن (۱۰ ثانیه)
+#     ۳) سه فایل txt کنارش ساخته می‌شود — همان‌ها را بفرست (عکس نه!)
+#
+#   خروجی‌ها:
+#     A_rod_longitudinal_spectra.txt    ستون‌ها: lambda_nm  Fp  T  eta  Ploss
+#     A_rod_longitudinal_summary.txt    قله‌ها، شیفت، راندمان‌ها
+#     A_rod_longitudinal_nearfield.txt  نقشه |E|^2 در صفحه y=0 (در NF_LAM)
+# =============================================================================
+
+TAG = "A_rod_longitudinal";
+
+# ---------------- فرکانس و طول‌موج (از مانیتور اول جعبه) --------------------
+f      = getdata("box_x1", "f");
+lam_nm = c / f * 1e9;
+
+# ---------------- توان کل و فاکتور پورسل ------------------------------------
+P0  = sourcepower(f);
+Ptot = dipolepower(f);
+Fp  = Ptot / P0;
+
+# ---------------- توان تابشی = جمع شار شش وجه (با علامت درست) ---------------
+# transmission() توان عبوری در جهت +نرمال را می‌دهد؛ پس وجه‌های ۱
+# (در مختصات منفی) که نرمال رو به بیرونشان منفی است با منها می‌آیند.
+Tx1 = transmission("box_x1");
+Tx2 = transmission("box_x2");
+Ty1 = transmission("box_y1");
+Ty2 = transmission("box_y2");
+Tz1 = transmission("box_z1");
+Tz2 = transmission("box_z2");
+T = -Tx1 + Tx2 - Ty1 + Ty2 - Tz1 + Tz2;
+
+eta   = T / Fp;
+Ploss = Fp - T;
+
+# ---------------- خودآزمایی تقارن (باید زیر ۲٪ باشد) --------------------------
+# دوقطبی z و میله نسبت به صفحات x=0 و y=0 آینه‌ای‌اند، پس مثلاً
+# شار +x از وجه x1 باید قرینه شار +x از وجه x2 باشد: Tx1 + Tx2 ≈ 0
+sym_x = max(abs(Tx1 + Tx2)) / max(abs(Tx2)) * 100;
+sym_y = max(abs(Ty1 + Ty2)) / max(abs(Ty2)) * 100;
+?"symmetry check |Tx1+Tx2| = " + num2str(sym_x) + " %   (باید < 2%)";
+?"symmetry check |Ty1+Ty2| = " + num2str(sym_y) + " %   (باید < 2%)";
+if ((sym_x > 2) | (sym_y > 2)) {
+    ?"هشدار: تقارن برقرار نیست! before sending، از پنجره Script Prompt عکس بگیر.";
+}
+
+# ---------------- قله‌ها ------------------------------------------------------
+iFp = find(Fp, max(Fp));
+iT  = find(T, max(T));
+Fp_max = Fp(iFp);  lam_Fp = lam_nm(iFp);
+T_max  = T(iT);    lam_T  = lam_nm(iT);
+
+?" ";
+?"=========== حالت A: میله + دوقطبی طولی ===========";
+?"Fp_max = " + num2str(Fp_max) + " @ " + num2str(lam_Fp) + " nm   (انتظار: ~1490 @ ~610)";
+?"T_max  = " + num2str(T_max)  + " @ " + num2str(lam_T)  + " nm   (انتظار: ~119.2 @ 616)";
+?"shift  = " + num2str(lam_T - lam_Fp) + " nm";
+?"eta @ Fp-peak = " + num2str(T(iFp)/Fp(iFp)*100) + " %";
+?"eta @ T-peak  = " + num2str(T(iT)/Fp(iT)*100) + " %";
+
+# ---------------- پوشه خروجی = کنار همین فایل اسکریپت ------------------------
+dir_out = filedirectory(currentfilename);
+if (dir_out == "") { dir_out = pwd; }
+
+# ---------------- ۱) طیف کامل ------------------------------------------------
+fn = dir_out + "/" + TAG + "_spectra.txt";
+if (fileexists(fn)) { rm(fn); }
+write(fn, "lambda_nm\tFp\tT\teta\tPloss");
+for (k = 1:length(lam_nm)) {
+    write(fn, num2str(lam_nm(k)) + "\t" + num2str(Fp(k)) + "\t" + num2str(T(k)) +
+              "\t" + num2str(eta(k)) + "\t" + num2str(Ploss(k)));
+}
+?"نوشته شد: " + TAG + "_spectra.txt";
+
+# ---------------- ۲) خلاصه ----------------------------------------------------
+fn = dir_out + "/" + TAG + "_summary.txt";
+if (fileexists(fn)) { rm(fn); }
+write(fn, TAG);
+write(fn, "Fp_max = " + num2str(Fp_max) + " at " + num2str(lam_Fp) + " nm");
+write(fn, "T_max  = " + num2str(T_max)  + " at " + num2str(lam_T)  + " nm");
+write(fn, "peak shift T-Fp = " + num2str(lam_T - lam_Fp) + " nm");
+write(fn, "eta at Fp-peak = " + num2str(T(iFp)/Fp(iFp)*100) + " %");
+write(fn, "eta at T-peak  = " + num2str(T(iT)/Fp(iT)*100) + " %");
+write(fn, "sym_x = " + num2str(sym_x) + " %   sym_y = " + num2str(sym_y) + " %");
+?"نوشته شد: " + TAG + "_summary.txt";
+
+# ---------------- ۳) نقشه میدان نزدیک ----------------------------------------
+# قالب دقیقاً مثل فایل‌های C/D: سطر اول مختصات x، ستون اول مختصات z
+x_nf = getdata("nf_xz", "x") * 1e9;
+z_nf = getdata("nf_xz", "z") * 1e9;
+E2   = getelectric("nf_xz");            # ابعاد (x, 1, z, f=1)
+E2m  = pinch(pinch(E2, 4, 1), 2);       # -> (x, z)
+nx = length(x_nf);
+nz = length(z_nf);
+?"nearfield grid: nx = " + num2str(nx) + "   nz = " + num2str(nz);
+
+fn = dir_out + "/" + TAG + "_nearfield.txt";
+if (fileexists(fn)) { rm(fn); }
+hdr = "x_nm";
+for (ix = 1:nx) { hdr = hdr + "\t" + num2str(x_nf(ix)); }
+write(fn, hdr);
+for (iz = 1:nz) {
+    row = num2str(z_nf(iz));
+    for (ix = 1:nx) { row = row + "\t" + num2str(E2m(ix, iz)); }
+    write(fn, row);
+}
+?"نوشته شد: " + TAG + "_nearfield.txt";
+
+# ---------------- نمودارهای کنترل چشمی ----------------------------------------
+plot(lam_nm, Fp, "wavelength (nm)", "Fp", "Purcell factor (A)");
+plot(lam_nm, T, "wavelength (nm)", "T", "Radiated power (A)");
+plot(lam_nm, 100*eta, "wavelength (nm)", "eta (%)", "Radiative efficiency (A)");
+
+?" ";
+?"تمام شد. هر ۳ فایل txt را بفرست (فایل عکس لازم نیست).";
