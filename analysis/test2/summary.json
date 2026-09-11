@@ -1,0 +1,102 @@
+{
+  "source_directory": "New folder (2)",
+  "samples": 201,
+  "lambda_nm": [
+    500.0,
+    900.0
+  ],
+  "cases": {
+    "B": {
+      "stem": "B_freespace",
+      "label": "Free space",
+      "Fp_raw_peak": {
+        "lambda_nm": 848.0,
+        "value": 1.13251
+      },
+      "T_raw_peak": {
+        "lambda_nm": 900.0,
+        "value": 1.003
+      },
+      "T_at_Fp_raw_peak": 1.00273,
+      "eta_at_Fp_raw_peak": 0.8854049853864425
+    },
+    "C": {
+      "stem": "C_tip_transverse",
+      "label": "Rod, transverse dipole",
+      "Fp_raw_peak": {
+        "lambda_nm": 508.0,
+        "value": 239.235
+      },
+      "T_raw_peak": {
+        "lambda_nm": 500.0,
+        "value": 0.482355
+      },
+      "T_at_Fp_raw_peak": 0.438739,
+      "eta_at_Fp_raw_peak": 0.0018339248019729553,
+      "Fp_baseline_corrected_peak": {
+        "lambda_nm": 506.0,
+        "value": 246.80914846879443
+      },
+      "T_baseline_corrected_peak": {
+        "lambda_nm": 500.0,
+        "value": 0.48585020638473175
+      },
+      "T_corrected_at_Fp_corrected_peak": 0.452993931193344,
+      "eta_corrected_at_Fp_corrected_peak": 0.0018354017020994616,
+      "nearfield": {
+        "shape": [
+          56,
+          35
+        ],
+        "max_value": 252627000000.0,
+        "max_position_nm": [
+          2.97785e-14,
+          35.0769
+        ],
+        "source_position_nm": [
+          0.0,
+          35.0
+        ]
+      }
+    },
+    "D": {
+      "stem": "D_sphere_R15.9",
+      "label": "Equal-volume sphere",
+      "Fp_raw_peak": {
+        "lambda_nm": 508.0,
+        "value": 658.738
+      },
+      "T_raw_peak": {
+        "lambda_nm": 532.0,
+        "value": 6.03331
+      },
+      "T_at_Fp_raw_peak": 5.03543,
+      "eta_at_Fp_raw_peak": 0.0076440557550953485,
+      "Fp_baseline_corrected_peak": {
+        "lambda_nm": 508.0,
+        "value": 679.2261784466652
+      },
+      "T_baseline_corrected_peak": {
+        "lambda_nm": 532.0,
+        "value": 6.063085814434689
+      },
+      "T_corrected_at_Fp_corrected_peak": 5.068741770918476,
+      "eta_corrected_at_Fp_corrected_peak": 0.007462524166118382,
+      "nearfield": {
+        "shape": [
+          44,
+          41
+        ],
+        "max_value": 294351000000.0,
+        "max_position_nm": [
+          -4.05319e-14,
+          21.0242
+        ],
+        "source_position_nm": [
+          0.0,
+          20.874
+        ]
+      }
+    }
+  }
+}
