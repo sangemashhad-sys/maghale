@@ -16,10 +16,11 @@
 *{box-sizing:border-box}
 html{background:#e9edf2;scroll-behavior:smooth}
 body{font-family:"Vazirmatn","XB Niloofar","Tahoma",sans-serif;
- font-size:1.02rem;line-height:2.05;max-width:var(--maxw);margin:2.5rem auto;
- padding:2.4rem 3.3rem;text-align:justify;text-justify:inter-word;color:var(--ink);
- background:#fff;box-shadow:0 12px 40px #23364d22;-webkit-font-smoothing:antialiased;
- overflow-wrap:break-word;word-wrap:break-word}
+ font-size:1.02rem;line-height:2.05;width:calc(100% - 2rem);max-width:210mm;
+ margin:2rem auto;padding:15mm 20mm;text-align:justify;text-justify:inter-word;
+ color:var(--ink);background:#fff;box-shadow:0 12px 40px #23364d22;
+ -webkit-font-smoothing:antialiased;overflow-wrap:break-word;word-wrap:break-word;
+ overflow-x:hidden}
 p,li,figcaption,td,th{overflow-wrap:anywhere;word-break:normal}
 img,svg,table{max-width:100%}
 mjx-container{max-width:100%;font-weight:400!important;color:#263445}
@@ -76,9 +77,10 @@ h2 .n,h3 .n{color:var(--num);font-weight:700;margin-inline-end:.35rem}
 .eq{margin:1.3rem 0;padding:.2rem 0;overflow-x:auto;direction:ltr;
  text-align:center}
 figure{margin:2rem 0;text-align:center}
-figure img{max-width:100%;height:auto;border:1px solid var(--line);
- border-radius:6px;background:#fff;padding:.35rem}
-figure a{display:inline-block;line-height:0}
+figure{width:100%;max-width:100%;overflow:hidden}
+figure a{display:block;width:100%;max-width:100%;line-height:0;overflow:hidden}
+figure img{display:block;width:auto;max-width:100%;height:auto;margin:0 auto;
+ border:1px solid var(--line);border-radius:6px;background:#fff;padding:.35rem}
 figcaption{font-size:.9rem;line-height:1.85;color:var(--soft);
  margin-top:.7rem;text-align:justify}
 figcaption b{color:var(--ink)}
@@ -102,18 +104,21 @@ ol.refs li{direction:ltr;text-align:left;font-family:"Times New Roman",serif;
 .hint b{color:var(--ink)}
 .hint code{font-size:.85em}
 :target{background:#fff3b0;border-radius:3px}
-code{direction:ltr;display:inline-block;font-size:.9em;
+code{direction:ltr;display:inline;max-width:100%;font-size:.9em;
  background:var(--tint);border:1px solid var(--line);border-radius:4px;
- padding:0 .3em}
+ padding:0 .3em;overflow-wrap:anywhere;word-break:break-word}
 @media (max-width:40rem){html{background:#fff}body{font-size:.98rem;line-height:1.95;
- margin:0 auto;padding:1.2rem;box-shadow:none}h1{font-size:1.3rem}.brand-logo{width:3.4rem;height:3.4rem}
+ width:100%;max-width:100%;margin:0;padding:1rem;box-shadow:none}h1{font-size:1.3rem}.brand-logo{width:3.4rem;height:3.4rem}
  a.pn{display:none}.print-tools span{display:none}}
-@page{size:A4;margin:18mm 20mm 20mm 20mm}
+@page{size:A4 portrait;margin:18mm 20mm 20mm 20mm}
 @media print{
- html,body{background:#fff;width:auto!important;min-width:0!important;max-width:100%!important;
-  margin:0!important;padding:0!important;overflow:visible!important}
- body{font-size:10.25pt;line-height:1.78;box-shadow:none;color:#111;text-align:justify}
- main,header,nav,section,article,div,p,ol,li,figure,figcaption{min-width:0;max-width:100%}
+ html{background:#fff;width:170mm!important;max-width:170mm!important;margin:0!important;
+  padding:0!important;overflow:hidden!important}
+ body{background:#fff;width:170mm!important;min-width:0!important;max-width:170mm!important;
+  margin:0!important;padding:0!important;overflow:hidden!important;font-size:10.25pt;
+  line-height:1.78;box-shadow:none;color:#111;text-align:justify}
+ body *{min-width:0;box-sizing:border-box}
+ main,header,nav,section,article,div,p,ol,li,figure,figcaption{width:auto;max-width:100%}
  .brand{width:100%}.brand-logo{width:17mm;height:17mm}
  .eq{width:100%;max-width:100%;overflow:hidden;font-size:9.2pt}
  mjx-container{font-weight:400!important;color:#182230!important}
@@ -130,8 +135,12 @@ code{direction:ltr;display:inline-block;font-size:.9em;
  p{orphans:3;widows:3;margin-bottom:2.5mm}
  .abs{break-inside:avoid-page;border-radius:0;background:#f5f7f9}
  .toc{break-before:page;page-break-before:always;border-radius:0}
- figure,.eq,table{break-inside:avoid-page;page-break-inside:avoid}
- figure{margin:6mm 0}figure img{border:0;padding:0;border-radius:0}
+ figure,.eq,table{break-inside:avoid-page;page-break-inside:avoid;width:100%!important;
+  max-width:100%!important;overflow:hidden!important}
+ figure{margin:6mm 0!important}
+ figure a{display:block!important;width:100%!important;max-width:100%!important;overflow:hidden!important}
+ figure img{display:block!important;width:auto!important;max-width:100%!important;height:auto!important;
+  margin:0 auto!important;border:0;padding:0;border-radius:0}
  figcaption{font-size:9pt;line-height:1.65}
  ol.refs li{font-size:8.8pt;line-height:1.5;break-inside:avoid}
  a{color:inherit;text-decoration:none}

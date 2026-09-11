@@ -68,3 +68,7 @@
 ## رفع دوم صفحه سفید Live Preview
 
 تست لاگ نشان داد مرورگر کاربر HTTP 200 برای `/` می‌گرفت ولی هیچ درخواست asset پس از آن نمی‌فرستاد؛ یعنی parser پیش از body متوقف می‌شد. علت باقی‌مانده Base64 دو فونت در `index.html` بود. تولیدکننده تغییر کرد: فقط `manuscript/preview.html` فونت‌های جاسازی‌شده دارد؛ نسخه ریشه Live Preview فونت‌ها را از فایل‌های محلی `manuscript/fonts/` می‌خواند. حجم `index.html` از حدود 193 KB به 61 KB کاهش یافت. پس از بازسازی، لاگ مرورگر درخواست واقعی لوگو را ثبت کرد، یعنی parser اکنون به body رسیده است. صفحه، لوگو، MathJax و شکل‌ها همگی HTTP 200 هستند. تلاش برای screenshot با Playwright به دلیل قطع TLS هنگام دانلود Chromium شکست خورد و مشکل کد نبود.
+
+## قفل سخت عرض A4 و رفع overflow
+
+کاربر خروج متن از چپ/راست را دوباره گزارش کرد. علت مهم یافت‌شده: `figure a` به صورت inline-block و با intrinsic width تصویر بزرگ بود و می‌توانست عرض layout/print را گسترش دهد. اکنون صفحه نمایشگر `max-width:210mm` با padding افقی 20mm و صفحه چاپ دقیقاً `170mm` (A4 منهای دو حاشیه 20mm) دارد. لینک شکل، تصویر، figure، جدول، MathJax، equation، مراجع و بلوک‌ها همگی به `max-width:100%` قفل و overflow افقی مخفی شدند. رشته‌های طولانی و code قابل شکست هستند. سرور جدید `tools/preview_server.py` با Cache-Control no-store راه افتاد تا Arena نسخه قدیمی CSS را cache نکند. پاسخ root اکنون 62KB و no-cache است. آزمون‌های HTML سالم و ZIP بازسازی شد. تست PDF خودکار با WeasyPrint به‌علت نبود کتابخانه سیستمی Pango در محیط ممکن نشد.
