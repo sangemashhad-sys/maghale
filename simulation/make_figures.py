@@ -1,11 +1,11 @@
-r"""Turn the Lumerical CSV exports into the three figures of the manuscript.
+r"""Turn the in-house FDTD CSV exports into the three figures of the manuscript.
 
 Usage (from the project root, after the FDTD run has finished):
 
     python simulation/make_figures.py
 
-Inputs  (written by simulation/nanorod_purcell.lsf, same folder):
-    spectra.csv          lambda_nm, Fp, T, eta_a, A_metal
+Inputs  (written by fdtd_mine/export_manuscript.py, same project):
+    spectra.csv          lambda_nm, Fp, T, eta_a, A_metal, T_amin
     peaks.csv            quantity, value, unit
     nearfield.csv        |E|^2 matrix, rows = x, cols = z
     nearfield_axes.csv   the x and z axes in nm
@@ -122,7 +122,12 @@ def fig_radiated(sp: dict, pk: dict) -> str:
     it, ifp = int(np.argmax(t)), int(np.argmax(fp))
 
     fig, ax = plt.subplots(figsize=(6.2, 4.0))
-    ax.plot(lam, t, color='#00429d', lw=1.6, label=r'$T$ (radiated)')
+    ax.plot(lam, t, color='#00429d', lw=1.6, label=r'$T$ (this work)')
+    if 'T_amin' in sp:                       # independent Lumerical cross-check
+        ta = sp['T_amin']
+        ax.plot(lam, ta, color='#00429d', lw=1.1, ls=(0, (3, 2)), alpha=0.75,
+                label=r'$T$ (Lumerical rerun, $T_{\max}=%.1f$ @ $%.0f$ nm)'
+                % (ta.max(), lam[int(np.argmax(ta))]))
     ax.plot(lam[it], t[it], 'o', ms=5, mfc='none', mec='#00429d', mew=1.4)
     ax.axvline(lam[ifp], color='#8b0000', ls='--', lw=0.9,
                label=r'$F_p$ peak (%.1f nm)' % lam[ifp])
@@ -144,7 +149,7 @@ def fig_radiated(sp: dict, pk: dict) -> str:
     ax2.tick_params(axis='y', colors='#2e7d32')
     ax2.set_ylim(bottom=0)
 
-    ax.legend(loc='upper left', fontsize=9, framealpha=0.9)
+    ax.legend(loc='lower right', fontsize=9, framealpha=0.9)
     out = os.path.join(FIGDIR, 'radiated_power_T.pdf')
     fig.savefig(out)
     plt.close(fig)
@@ -176,10 +181,21 @@ def fig_nearfield(pk: dict) -> str | None:
     # Plot with z horizontal (the rod axis) so the elongated geometry fills
     # the frame; transposing puts z on the first axis for pcolormesh.
     fig, ax = plt.subplots(figsize=(6.6, 3.6))
-    floor = max(e2[e2 > 0].min(), e2.max() * 1e-6)
+    # Exclude the singular dipole drive cell from the colour scale, then
+    # show 4 decades; zoom to the rod neighbourhood (data may span the
+    # whole simulation domain).
+    lt = pk.get('L_total') or 60.0
+    dg = pk.get('d_gap') or 5.0
+    zs = lt / 2.0 + dg
+    m = (np.abs(x)[:, None] < 6.0) & (np.abs(z[None, :] - zs) < 6.0)
+    vmax = e2[~m].max() if m.shape == e2.shape else e2.max()
+    floor = vmax * 1e-4
     mesh = ax.pcolormesh(z, x, np.maximum(e2, floor),
-                         norm=LogNorm(vmin=floor, vmax=e2.max()),
+                         norm=LogNorm(vmin=floor, vmax=vmax),
                          cmap='inferno', shading='auto')
+    hw = lt / 2.0 + dg + 30.0
+    ax.set_xlim(-hw, hw)
+    ax.set_ylim(-hw, hw)
     cb = fig.colorbar(mesh, ax=ax, pad=0.02)
     cb.set_label(r'$|E|^2$ (a.u., log scale)')
 
@@ -201,9 +217,9 @@ def fig_nearfield(pk: dict) -> str | None:
     ax.set_xlabel('z (nm)   -- rod axis')
     ax.set_ylabel('x (nm)')
     ax.set_aspect('equal')
-    lam_fp = pk.get('lambda_Fp')
-    if lam_fp:
-        ax.set_title(r'$|E|^2$ at $\lambda_{\rm res}=%.1f$ nm' % lam_fp,
+    lam_nf = pk.get('lambda_NF') or pk.get('lambda_Fp')
+    if lam_nf:
+        ax.set_title(r'$|E|^2$ at $\lambda_{\rm res}=%.1f$ nm' % lam_nf,
                      fontsize=10)
     out = os.path.join(FIGDIR, 'NearField_Profile.png')
     fig.savefig(out, dpi=400)
@@ -269,9 +285,8 @@ def main() -> None:
         if path:
             print('wrote', os.path.relpath(path, ROOT))
 
-    print('\nNext: run tools\\figures_prep.py to refresh the web '
-          'PNGs, then tools\\make_review_zip.py to rebuild the HTML '
-          'package (PDF builds are blocked: no TeX engine on this box)')
+    print('\nNext: run tools/figures_prep.py to refresh the web '
+          'PNGs, then tools/tex2html.py to rebuild manuscript/preview.html')
 
 
 if __name__ == '__main__':

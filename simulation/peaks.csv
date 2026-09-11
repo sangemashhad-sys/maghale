@@ -1,0 +1,15 @@
+quantity,value,unit
+L_total,60.0,nm
+D_rod,20.0,nm
+R_cap,10.0,nm
+d_gap,5.0,nm
+mesh_accuracy,0,-
+dx_fine,2.0,nm
+lambda_Fp,592.0,nm
+Fp_max,1936.9451712741375,-
+lambda_NF,610.0,nm
+lambda_T,600.0,nm
+T_max,112.11940355593117,-
+T_amin_max,119.219,-
+lambda_T_amin,616.0,nm
+balance_err_median,0.0,pct
