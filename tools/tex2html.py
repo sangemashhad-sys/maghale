@@ -588,7 +588,11 @@ code{direction:ltr;display:inline;max-width:100%;font-size:.9em;
   margin:0 auto!important;border:0;padding:0;border-radius:0}
  figcaption{font-size:9pt;line-height:1.65}
  ol.refs li{font-size:8.8pt;line-height:1.5;break-inside:avoid}
- a{color:inherit;text-decoration:none}
+ a:not(.pn){color:var(--accent)!important;text-decoration:none}
+ sup a{font-weight:700!important;color:var(--accent)!important}
+ ol.refs a{color:var(--accent)!important;text-decoration:underline!important;
+  text-decoration-thickness:.35pt!important;text-underline-offset:1.5pt}
+ figure a,.toc a{text-decoration:none!important}
  a.pn,.hint,.print-tools{display:none!important}
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }

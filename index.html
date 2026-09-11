@@ -143,7 +143,11 @@ code{direction:ltr;display:inline;max-width:100%;font-size:.9em;
   margin:0 auto!important;border:0;padding:0;border-radius:0}
  figcaption{font-size:9pt;line-height:1.65}
  ol.refs li{font-size:8.8pt;line-height:1.5;break-inside:avoid}
- a{color:inherit;text-decoration:none}
+ a:not(.pn){color:var(--accent)!important;text-decoration:none}
+ sup a{font-weight:700!important;color:var(--accent)!important}
+ ol.refs a{color:var(--accent)!important;text-decoration:underline!important;
+  text-decoration-thickness:.35pt!important;text-underline-offset:1.5pt}
+ figure a,.toc a{text-decoration:none!important}
  a.pn,.hint,.print-tools{display:none!important}
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
@@ -224,7 +228,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],tags:'none',
  {\mathrm{sourcepower}(\lambda)}=\frac{P_{\mathrm{tot}}}{P_0},\tag{3}\\
  \eta_a(\lambda)&=\frac{T(\lambda)}{\Fp(\lambda)},\tag{4}\\
  \frac{P_{\mathrm{loss}}}{P_0}&=\Fp(\lambda)-T(\lambda)\tag{5}\end{align}</div>
-<p id="p19"><a class="pn" href="#p19">19</a>به دست آمدند. نتیجه فضای آزاد B برای کنترل عددی استفاده شد. مقدار \(T_B\) در کل بازه با خطایی کمتر از حدود یک درصد نزدیک یک بود، در حالی که \(F_{p,B}\) وابستگی طیفی قابل مشاهده‌ای داشت و بیشینه آن ۱٫۱۳۳ بود. ازاین‌رو برای مقایسه دقیق کنترل‌ها، مقادیر تصحیح‌شده \(\Fp/\Fp_B\) و \(T/T_B\) نیز محاسبه شدند؛ بااین‌حال نمودارهای اصلی مقادیر خام تعریف‌شده در رابطه‌های بالا را نشان می‌دهند تا همه حالت‌ها با یک قرارداد گزارش شوند.</p>
+<p id="p19"><a class="pn" href="#p19">19</a>به دست آمدند. نتیجه فضای آزاد B برای کنترل عددی استفاده شد. مقدار \(T_B\) در کل بازه با خطایی کمتر از حدود یک درصد نزدیک یک بود، در حالی که \(F_{p,B}\) وابستگی طیفی قابل مشاهده‌ای داشت و بیشینه آن ۱٫۱۳۳ بود. ازاین‌رو برای مقایسه دقیق کنترل‌ها، مقادیر تصحیح‌شده \(\Fp/F_{p,B}\) و \(T/T_B\) نیز محاسبه شدند؛ بااین‌حال نمودارهای اصلی مقادیر خام تعریف‌شده در رابطه‌های بالا را نشان می‌دهند تا همه حالت‌ها با یک قرارداد گزارش شوند.</p>
 <p id="p20"><a class="pn" href="#p20">20</a>مانیتور میدان نزدیک در صفحه \(xz\) قرار داشت. میدان حالت‌های A و C در \(\nm{610}\) و میدان کره D در \(\nm{530}\) نمونه‌برداری شد. خروجی <code>getelectric</code> کمیت \(|E|^2\) را می‌دهد. در فایل متنی تولیدشده، عنوان سرستون به‌اشتباه <code>x_nm</code> نوشته شده بود، در حالی که مقادیر آن مختصات \(z\) بودند؛ این جابه‌جایی هنگام ترسیم اصلاح شد.</p>
 <p id="p21"><a class="pn" href="#p21">21</a>اعتبار پاسخ موضعی کلاسیک در گپ پنج‌نانومتری پذیرفته شد، زیرا این فاصله بالاتر از ناحیه زیرنانومتری تونل‌زنی الکترونی است؛ بااین‌حال پاسخ غیرموضعی می‌تواند تصحیح کمّی ایجاد کند و نتایج حاضر باید در چارچوب مدل موضعی و داده تجربی جانسون–کریستی تفسیر شوند <sup>[<a href="#ref-xu2023quantum">19</a>, <a href="#ref-babicheva2023optical">20</a>]</sup>.</p>
 <h2 id="sec:results"><span class="n">4</span> نتایج و بحث</h2>
