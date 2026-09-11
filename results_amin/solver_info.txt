@@ -1,0 +1,15 @@
+Solver: Ansys Lumerical 2024 R1 FDTD, version 8.31.3633 (Windows 64bit)
+Run date: Tue Sep 8 2026 (19:20-19:21 local)
+Host: DESKTOP-OOHI6PS, 2 MPI processes, ~5.8 GB free RAM
+Project files: E:/University/FDTD Projects/{B_freespace,C_tip_transverse,D_sphere_R15.9}.fsp
+
+Grid sizes (mesh accuracy 3 + 2nm override):
+  B_freespace:       74 x 74 x 38
+  C_tip_transverse:  70 x 70 x 47
+  D_sphere_R15.9:    76 x 76 x 40
+
+Auto-shutoff (min 1e-5): reached in all runs (early termination) --
+  B: 5033 iters, shutoff 1.49e-8, wall 14.8 s
+  C: 5963 iters, shutoff 9.45e-6, wall 20.0 s
+  D: 7417 iters, shutoff 7.92e-6, wall 25.2 s
+=> fields decayed properly; DFT spectra are converged in time.

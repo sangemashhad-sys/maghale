@@ -1,0 +1,26 @@
+B_freespace
+Fp_max = 1.13251  at 848 nm
+T_max  = 1.003  at 900 nm
+peak shift T-Fp = 52 nm
+eta at Fp-peak = 88.54 %
+eta at T-peak  = 99.6794 %
+eta_max = 108.045 %  at 748 nm
+Fp(500nm) = 0.960386   T(500nm) = 0.992806
+
+C_tip_transverse
+Fp_max = 239.235  at 508 nm
+T_max  = 0.482355  at 500 nm
+peak shift T-Fp = -8 nm
+eta at Fp-peak = 0.183392 %
+eta at T-peak  = 0.20709 %
+eta_max = 5.7143 %  at 812 nm
+Fp(500nm) = 232.92   T(500nm) = 0.482355
+
+D_sphere_R15.9
+Fp_max = 658.738  at 508 nm
+T_max  = 6.03331  at 532 nm
+peak shift T-Fp = 24 nm
+eta at Fp-peak = 0.764406 %
+eta at T-peak  = 1.11833 %
+eta_max = 11.7948 %  at 884 nm
+Fp(500nm) = 636.331   T(500nm) = 4.41818
