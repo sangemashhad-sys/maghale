@@ -708,11 +708,19 @@ def main():
 
     open(OUT, 'w', encoding='utf-8', newline='\n').write(doc)
 
-    # MathJax and figure assets live under manuscript/. Prefix only those
-    # asset URLs in the root copy; a <base> element is deliberately avoided
-    # because it would also redirect in-page #anchors away from index.html.
+    # نسخه ریشه برای Live Preview باید سبک بماند. بعضی proxy/viewerها پیش
+    # از رسیدن parser به <body> روی CSS دارای Base64 بزرگ متوقف می‌شوند و
+    # صفحه‌ای کاملاً سفید نشان می‌دهند. در preview.html قلم همچنان جاسازی
+    # است، اما در index.html از فایل‌های محلی هم‌مبدأ استفاده می‌کنیم.
+    root_doc = doc
+    font_paths = iter(('manuscript/fonts/Vazirmatn-Regular.woff2',
+                       'manuscript/fonts/Vazirmatn-Bold.woff2'))
+    root_doc = re.sub(r'data:font/woff2;base64,[A-Za-z0-9+/=]+',
+                      lambda _m: next(font_paths), root_doc, count=2)
+    # دارایی‌های MathJax، شکل و لوگو زیر manuscript/ هستند. از <base> عمداً
+    # استفاده نمی‌شود، چون anchorهای داخلی را هم منحرف می‌کند.
     root_doc = re.sub(r'((?:src|href)=")((?:vendor|figures|assets)/)',
-                      r'\1manuscript/\2', doc)
+                      r'\1manuscript/\2', root_doc)
     open(ROOT_OUT, 'w', encoding='utf-8', newline='\n').write(root_doc)
 
     print('نوشته شد: %s  (%d کیلوبایت)'
