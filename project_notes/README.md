@@ -18,7 +18,8 @@
 2. [`02_history_and_lineage.md`](02_history_and_lineage.md): تاریخچه شکل‌گیری و منشأ هر لایه
 3. [`03_repository_map.md`](03_repository_map.md): نقش فایل‌ها و میزان اتکاپذیری آن‌ها
 4. [`04_open_questions.md`](04_open_questions.md): ابهام‌هایی که باید پیش از اصلاح مقاله حل شوند
-5. [`CURRENT_STATE.md`](CURRENT_STATE.md): نقطه دقیق توقف و دستور ادامه کار
+5. [`05_readiness_assessment.md`](05_readiness_assessment.md): آمادگی برای ارائه، تحویل و انتشار
+6. [`CURRENT_STATE.md`](CURRENT_STATE.md): نقطه دقیق توقف و دستور ادامه کار
 
 ## قاعده ادامه کار
 
