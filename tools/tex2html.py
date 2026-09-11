@@ -145,6 +145,18 @@ def inline_fonts(doc):
     return re.sub(r'url\("([^"]+\.woff2)"\)', sub, doc), done
 
 
+def image_data_uri(rel):
+    """یک تصویر محلی کوچک را برای HTML تک‌فایلی به data URI تبدیل می‌کند."""
+    path = os.path.join(MS, rel.replace('/', os.sep))
+    if not os.path.isfile(path):
+        sys.stderr.write('هشدار: تصویر سربرگ یافت نشد: %s\n' % rel)
+        return ''
+    ext = os.path.splitext(path)[1].lower()
+    mime = 'image/png' if ext == '.png' else 'image/jpeg'
+    with open(path, 'rb') as f:
+        return 'data:%s;base64,%s' % (mime, base64.b64encode(f.read()).decode('ascii'))
+
+
 def web_src(want):
     """(نشانی تصویر برای مرورگر، نشانی نسخه‌ی برداری) را برمی‌گرداند.
 
@@ -455,8 +467,8 @@ body{font-family:"Vazirmatn","XB Niloofar","Tahoma",sans-serif;
 .article-head{border-top:7px solid var(--accent);padding-top:1.25rem;margin-bottom:1.45rem}
 .brand{display:flex;align-items:center;justify-content:space-between;gap:1rem;
  padding-bottom:.85rem;border-bottom:1px solid var(--line);color:var(--accent)}
-.brand-mark{width:3.3rem;height:3.3rem;border:2px solid var(--accent);border-radius:50%;
- display:grid;place-items:center;font-size:.7rem;line-height:1.35;text-align:center;font-weight:700}
+.brand-logo{width:4.2rem;height:4.2rem;object-fit:contain;display:block;
+ filter:drop-shadow(0 2px 3px #123f7022)}
 .brand-name{font-size:1.08rem;font-weight:700}.brand-type{color:var(--soft);font-size:.78rem}
 h1{font-size:1.62rem;line-height:1.85;text-align:center;font-weight:700;
  letter-spacing:-.01em;margin:1.35rem auto 1rem;max-width:44rem}
@@ -532,7 +544,7 @@ code{direction:ltr;display:inline-block;font-size:.9em;
  background:var(--tint);border:1px solid var(--line);border-radius:4px;
  padding:0 .3em}
 @media (max-width:40rem){html{background:#fff}body{font-size:.98rem;line-height:1.95;
- margin:0 auto;padding:1.2rem;box-shadow:none}h1{font-size:1.3rem}.brand-mark{width:2.8rem;height:2.8rem}
+ margin:0 auto;padding:1.2rem;box-shadow:none}h1{font-size:1.3rem}.brand-logo{width:3.4rem;height:3.4rem}
  a.pn{display:none}.print-tools span{display:none}}
 @page{size:A4;margin:17mm 18mm 19mm 18mm}
 @media print{
@@ -565,7 +577,7 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
 <header class="article-head">
  <div class="brand"><div><div class="brand-name">@@AFF@@</div>
  <div class="brand-type">مقاله علمی ـ پژوهشی دانشجویی</div></div>
- <div class="brand-mark">دانشگاه<br>اصفهان</div></div>
+ <img class="brand-logo" src="@@LOGO@@" alt="نشان دانشگاه اصفهان"></div>
  <h1>@@T@@</h1>
  <div class="byline">@@AU@@</div>
  <div class="affiliation">@@AFF@@<br>استاد راهنما: @@ADV@@<br>
@@ -646,8 +658,10 @@ def main():
         mj = MATHJAX_CDN
         print('MathJax: از CDN (برای نسخه‌ی آفلاین:'
               ' python tools/vendor_mathjax.py)')
-    for k, v in (('@@T@@', inline(title)), ('@@AU@@', inline(authors)),
-                 ('@@AFF@@', inline(affiliation)), ('@@ADV@@', inline(advisor)),
+    logo_uri = image_data_uri('assets/university-isfahan-logo-green.png')
+    for k, v in (('@@T@@', inline(title)), ('@@LOGO@@', logo_uri),
+                 ('@@AU@@', inline(authors)), ('@@AFF@@', inline(affiliation)),
+                 ('@@ADV@@', inline(advisor)),
                  ('@@DATE@@', inline(paperdate)), ('@@ABS@@', abs_html),
                  ('@@KW@@', kw_html), ('@@TOC@@', toc),
                  ('@@BODY@@', main_html), ('@@REFS@@', '\n'.join(refs)),
