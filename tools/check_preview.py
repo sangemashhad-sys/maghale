@@ -23,6 +23,7 @@ for _s in (sys.stdout, sys.stderr):
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HTML = os.path.join(ROOT, 'manuscript', 'preview.html')
+ROOT_HTML = os.path.join(ROOT, 'index.html')
 
 
 def main():
@@ -50,6 +51,26 @@ def main():
     print('MathJax محلی: %s' % local_mj)
     if not local_mj:
         bad.append('MathJax')
+
+    # Root index must prefix local assets with manuscript/, while #anchors
+    # must remain local to the same document. This keeps MathJax working and
+    # preserves equation/section links when index.html is opened directly.
+    root_ok = False
+    if os.path.isfile(ROOT_HTML):
+        root_doc = io.open(ROOT_HTML, encoding='utf-8').read()
+        root_ok = '<base ' not in root_doc
+        assets = re.findall(r'(?:src|href)="([^"#:]+)"', root_doc)
+        for rel in assets:
+            if rel.startswith(('data:', 'http', 'mailto:', '/')):
+                continue
+            candidate = os.path.join(ROOT, rel.replace('/', os.sep))
+            if not rel.startswith('manuscript/') or not os.path.isfile(candidate):
+                root_ok = False
+                break
+    print('نسخه‌ی ریشه و مسیر دارایی‌ها: %s'
+          % ('سالم' if root_ok else 'خراب'))
+    if not root_ok:
+        bad.append('index ریشه')
 
     plain = re.sub(r'<script.*?</script>|<div class="eq".*?</div>'
                    r'|\\\(.*?\\\)', '', doc, flags=re.S)

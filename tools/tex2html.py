@@ -27,6 +27,7 @@ for _s in (sys.stdout, sys.stderr):
 MS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                   'manuscript')
 OUT = os.path.join(MS, 'preview.html')
+ROOT_OUT = os.path.join(os.path.dirname(MS), 'index.html')
 
 # MathJax: اگر نسخه‌ی محلی (tools/vendor_mathjax.py) موجود باشد همان استفاده
 # می‌شود تا پیش‌نمایش بدون اینترنت هم فرمول‌ها را نشان دهد؛ وگرنه CDN.
@@ -629,8 +630,17 @@ def main():
 
     open(OUT, 'w', encoding='utf-8', newline='\n').write(doc)
 
+    # MathJax and figure assets live under manuscript/. Prefix only those
+    # asset URLs in the root copy; a <base> element is deliberately avoided
+    # because it would also redirect in-page #anchors away from index.html.
+    root_doc = re.sub(r'((?:src|href)=")((?:vendor|figures)/)',
+                      r'\1manuscript/\2', doc)
+    open(ROOT_OUT, 'w', encoding='utf-8', newline='\n').write(root_doc)
+
     print('نوشته شد: %s  (%d کیلوبایت)'
           % (OUT, len(doc.encode('utf-8')) // 1024))
+    print('نسخه‌ی ریشه: %s (دارایی‌ها از manuscript/ بارگیری می‌شوند)'
+          % ROOT_OUT)
     print('بخش‌ها: %d | شکل: %d | جدول: %d | رابطه: %d | مرجع: %d'
           % (N['sec'], N['fig'], N['tab'], N['eq'], len(refs)))
     left = sorted(set(re.findall(r'\\([a-zA-Z]+)', re.sub(
