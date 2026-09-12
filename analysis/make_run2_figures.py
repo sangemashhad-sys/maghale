@@ -16,7 +16,12 @@ def save(fig,name):
 # --- شکل ۱: طیف‌های F_p و T هر سه حالت (لگاریتمی) -------------------------
 fig,ax=plt.subplots(2,1,figsize=(6.4,7),sharex=True)
 ax[0].semilogy(lam,C[:,1],label='C: rod, transverse dipole'); ax[0].semilogy(lam,D[:,1],label='D: equal-volume sphere')
-ax[0].semilogy(lam,B[:,1],'k--',lw=1,label='B: free space'); ax[0].plot(*A_FP,'r*',ms=12,label='A: rod, longitudinal (reported peak)')
+ax[0].semilogy(lam,B[:,1],'k--',lw=1,label='B: free space')
+Ad=os.path.join(ROOT,'analysis','A_baseline_Fp_digitized.txt')
+if os.path.isfile(Ad):
+    A=np.loadtxt(Ad); m=~np.isnan(A[:,1])
+    ax[0].semilogy(A[m,0],A[m,1],color='r',lw=1.2,alpha=.8,label='A: rod, longitudinal (digitized from screenshot)')
+ax[0].plot(*A_FP,'r*',ms=12,label='A: reported peak')
 ax[0].set_ylabel('$F_p = P_{tot}/P_0$'); ax[0].legend(fontsize=8); ax[0].grid(alpha=.3,which='both')
 ax[1].semilogy(lam,C[:,2],label='C'); ax[1].semilogy(lam,D[:,2],label='D'); ax[1].semilogy(lam,B[:,2],'k--',lw=1,label='B')
 ax[1].plot(*A_T,'r*',ms=12,label='A (reported peak)'); ax[1].set_ylabel('$T = P_{rad}/P_0$'); ax[1].set_xlabel('Wavelength (nm)')

@@ -100,3 +100,18 @@ if __name__ == '__main__':
     fig.savefig(os.path.join(ROOT,'manuscript','figures','D_sphere_mie_vs_fdtd.pdf'))
     fig.savefig(os.path.join(ROOT,'manuscript','figures','web','D_sphere_mie_vs_fdtd.png'), dpi=150)
     print('saved figure')
+
+    # --- پویش گاف تحلیلی (جایگزین موقت حالت‌های F_gap3/10/20 که اجرا نشده‌اند) ---
+    gaps=[3,5,10,15,20,30]; lam2=np.arange(500,901,2.0); rows=[]
+    fig,ax=plt.subplots(1,3,figsize=(10,3.2))
+    for gp in gaps:
+        F=np.array([rates_radial(L,a,a+gp)[0] for L in lam2]); Tt=np.array([rates_radial(L,a,a+gp)[1] for L in lam2])
+        ax[0].semilogy(lam2,F,label='gap %g nm'%gp); ax[1].plot(lam2,Tt); ax[2].semilogy(lam2,100*Tt/F)
+        i=F.argmax(); j=Tt.argmax(); rows.append((gp,lam2[i],F[i],lam2[j],Tt[j],100*Tt[i]/F[i],100*(Tt/F).max()))
+    ax[0].set_ylabel('$F_p$'); ax[1].set_ylabel('$T$'); ax[2].set_ylabel('$\\eta_a$ (%)')
+    for A_ in ax: A_.set_xlabel('Wavelength (nm)'); A_.grid(alpha=.3)
+    ax[0].legend(fontsize=7); fig.suptitle('Mie theory: radial dipole near Au sphere R=%.3f nm, gap sweep'%a); fig.tight_layout()
+    fig.savefig(os.path.join(ROOT,'manuscript','figures','fig_gap_sweep_mie.pdf')); fig.savefig(os.path.join(ROOT,'manuscript','figures','web','fig_gap_sweep_mie.png'),dpi=150)
+    hdr='gap_nm\tlam_Fp\tFp_max\tlam_T\tT_max\teta_at_Fp_peak_%\teta_max_%'
+    txt='\n'.join([hdr]+['%g\t%.0f\t%.1f\t%.0f\t%.2f\t%.2f\t%.1f'%r for r in rows])
+    open(os.path.join(ROOT,'analysis','gap_sweep_mie.txt'),'w').write(txt); print(txt)
