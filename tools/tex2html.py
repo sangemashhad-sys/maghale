@@ -540,7 +540,9 @@ code{direction:ltr;display:inline-block;font-size:.9em;
  padding:0 .3em}
 @media (max-width:34rem){body{font-size:.98rem;line-height:1.95;
  margin:1.2rem auto}h1{font-size:1.3rem}a.pn{display:none}}
-@media print{body{max-width:none;margin:0;font-size:11pt}.toc{display:none}
+.authors{text-align:center;font-size:1.05em;margin:.2em 0 1.2em}.affil{font-size:.85em;color:#444}
+@page{size:A4;margin:22mm 20mm}
+@media print{body{max-width:none;margin:0;font-size:11pt}.toc{display:none}figure,table{break-inside:avoid}h2{break-after:avoid}
  h2,h3{page-break-after:avoid}figure,.eq{page-break-inside:avoid}
  figure img{border:0;padding:0}a{color:inherit;text-decoration:none}
  a.pn,.hint{display:none}}
@@ -552,6 +554,7 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
 <script defer src="@@MJ@@"></script>
 </head><body>
 <h1>@@T@@</h1>
+<p class="authors">امین حسین سدیدی<sup>*</sup>، سید محمد پارسا مولایی طبری، مالک باقری هارونی<sup>†</sup><br><span class="affil">گروه فیزیک، دانشکده‌ی فیزیک، دانشگاه اصفهان، اصفهان، ایران</span><br><span class="affil"><sup>*</sup> نویسنده‌ی مسئول &nbsp; <sup>†</sup> استاد راهنما</span></p>
 <div class="hint">
 <b>این یک پیش‌نمایش برای بازبینی است، نه نسخه‌ی نهایی.</b>
 صفحه‌آرایی، شماره‌ی صفحه و شکستِ سطرها در PDF نهایی (XeLaTeX) تعیین
