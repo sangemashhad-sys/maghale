@@ -26,7 +26,7 @@ for _s in (sys.stdout, sys.stderr):
 
 MS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                   'manuscript')
-OUT = os.path.join(MS, 'preview.html')
+OUT = os.path.join(MS, 'final.html' if '--final' in sys.argv else 'preview.html')
 
 # MathJax: اگر نسخه‌ی محلی (tools/vendor_mathjax.py) موجود باشد همان استفاده
 # می‌شود تا پیش‌نمایش بدون اینترنت هم فرمول‌ها را نشان دهد؛ وگرنه CDN.
@@ -147,9 +147,9 @@ def inline_fonts(doc):
 def inline_images(doc):
     """تصویرهای شکل‌ها را به data: تبدیل می‌کند.
 
-    دلیل: پیش‌نمایش باید یک فایلِ خودبسنده باشد تا در نمایشگر تک‌فایلی،
-    در zip بازبینی و در `file://` بدون هیچ منبع بیرونی کامل دیده شود؛
-    وگرنه شکل‌ها به‌صورت قاب شکسته نمایش داده می‌شوند.
+    دلیل: پیش‌نمایش و نسخه‌ی نهایی باید تک‌فایلِ خودبسنده باشند تا در
+    نمایشگر تک‌فایلی، در zip بازبینی و در `file://` بدون هیچ منبع بیرونی
+    کامل دیده شوند؛ وگرنه شکل‌ها قاب شکسته می‌شوند.
     """
     done = []
 
@@ -172,8 +172,7 @@ def inline_mathjax(doc):
 
     برچسب <script defer src> فقط وقتی معنا دارد که فایل کنار صفحه قابل
     دسترس باشد؛ در نمایشگر تک‌فایلی نیست. پس وقتی نسخه‌ی محلی موجود است،
-    کل bundle را درون‌خطی می‌کنیم. فایل tex-svg.js رشته‌ی </script ندارد
-    (پیش از این committing بررسی شده)، پس درون‌خطی‌کردن امن است.
+    کل bundle را درون‌خطی می‌کنیم.
     """
     rel = MATHJAX_LOCAL.replace(os.sep, '/')
     tag = '<script defer src="%s"></script>' % rel
@@ -230,6 +229,7 @@ def take_math(text):
                 row = row.rstrip() + '\\tag{%d}' % N['eq']
             rows.append(row)
         tex = '\\begin{%s}%s\\end{%s}' % (env, '\\\\'.join(rows), env)
+        tex = tex.replace('<', '&lt;').replace('>', '&gt;')   # HTML-safe
         anchor = ' id="%s"' % html.escape(first) if first else ''
         # در align چند رابطه یک بلوک‌اند و id فقط یکی می‌تواند باشد؛ برای
         # برچسب‌های بعدی لنگر خالی می‌گذاریم تا \eqref به آن‌ها هم برسد.
@@ -241,7 +241,8 @@ def take_math(text):
                   display, text, flags=re.S)
     # $...$ درون‌خطی
     text = re.sub(r'(?<!\\)\$(.+?)(?<!\\)\$',
-                  lambda m: keep('\\(' + m.group(1) + '\\)'), text, flags=re.S)
+                  lambda m: keep('\\(' + m.group(1).replace('<', '&lt;').replace('>', '&gt;') + '\\)'),
+                  text, flags=re.S)
     return text
 
 
@@ -300,7 +301,10 @@ def take_floats(text):
         if tm:
             inner = body[tm.end():]
             inner = inner[:inner.find('\\end{tabular}')]
-            inner = re.sub(r'^\s*\{[^}]*\}', '', inner, count=1)
+            inner = inner.lstrip()
+            if inner.startswith('{'):           # مشخصه‌ی ستون‌ها، حتی با p{..\linewidth} تودرتو
+                _, k = group(inner, 0)
+                inner = inner[k:]
             inner = re.sub(r'\\(toprule|midrule|bottomrule|hline)', '', inner)
             for ri, row in enumerate([r for r in inner.split('\\\\') if r.strip()]):
                 tag = 'th' if ri == 0 else 'td'
@@ -349,6 +353,20 @@ def inline(text):
     text = re.sub(r'\\eqref\{([^}]+)\}', r'<x-ref k="\1" p="1"></x-ref>', text)
     text = re.sub(r'\\ref\{([^}]+)\}', r'<x-ref k="\1"></x-ref>', text)
 
+    # \paragraph{عنوان} → عنوان درشت درون‌خطی ؛ \footnote{...} → پرانتز
+    for cmd, tag in (('paragraph', 'b class="para"'), ('footnote', 'span class="fn"')):
+        while True:
+            m = re.search(r'\\%s\{' % cmd, text)
+            if not m:
+                break
+            arg, end = group(text, m.end() - 1)
+            close = tag.split()[0]
+            if cmd == 'footnote':
+                rep = ' <%s>(%s)</%s>' % (tag, arg, close)
+            else:
+                rep = '<%s>%s</%s> ' % (tag, arg, close)
+            text = text[:m.start()] + rep + text[end:]
+
     for cmd, tag in (('textbf', 'b'), ('emph', 'i'), ('textit', 'i'),
                      ('texttt', 'code')):
         while True:
@@ -376,6 +394,10 @@ def bib(path):
     if not os.path.isfile(path):
         return {}
     src = open(path, encoding='utf-8').read()
+    for a, b in (('{\\"u}', 'ü'), ('{\\"o}', 'ö'), ('{\\"a}', 'ä'), ('{\\aa}', 'å'),
+                 ('\\"u', 'ü'), ('\\"o', 'ö'), ('\\"a', 'ä'), ('\\aa ', 'å'),
+                 ("\\'e", 'é'), ('\\&', '&')):
+        src = src.replace(a, b)
     out = {}
     for m in re.finditer(r'@\w+\s*\{\s*([^,\s]+)\s*,', src):
         body, _ = group(src, src.index('{', m.start()))
@@ -485,11 +507,12 @@ def body_html(text, number=False):
 
 
 PAGE = """<!DOCTYPE html>
-<html lang="fa" dir="rtl"><head>
+<html lang="fa" dir="rtl" class="@@CLS@@"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>@@T@@</title>
 <style>
+.fn{font-size:.85em;color:#555} b.para{color:#7a1f1f}
 /* قلم متن: وزیرمتن (SIL OFL 1.1). فایل .woff2 آن در manuscript/fonts کنار
    همین فایل است، ولی نشانی زیر پیش از نوشتن خروجی به data: تبدیل می‌شود
    (inline_fonts) تا کروم هم در file:// قلم را نشان دهد، نه فقط فایرفاکس. */
@@ -523,9 +546,6 @@ a{color:var(--accent)}
 h2 .n,h3 .n{color:var(--num);font-weight:700;margin-inline-end:.35rem}
 .abs{background:var(--tint);border:1px solid var(--line);border-radius:8px;
  padding:1.1rem 1.35rem;font-size:.97rem;line-height:1.95}
-.meta{text-align:center;color:var(--soft);font-size:.95rem;line-height:2.05;
- margin:-.4rem 0 1.5rem}
-.meta b{color:var(--ink)}
 .abs h2{border:0;margin:0 0 .6rem;padding:0;font-size:1.02rem;
  text-align:center;letter-spacing:.02em}
 .kw{font-size:.92rem;color:var(--soft);line-height:1.9;margin:.9rem 0 1.6rem}
@@ -573,7 +593,27 @@ code{direction:ltr;display:inline-block;font-size:.9em;
  padding:0 .3em}
 @media (max-width:34rem){body{font-size:.98rem;line-height:1.95;
  margin:1.2rem auto}h1{font-size:1.3rem}a.pn{display:none}}
-@media print{body{max-width:none;margin:0;font-size:11pt}.toc{display:none}
+.byline{text-align:center;margin:0 0 2rem}.byline p{margin:0;text-align:center}.authors{font-size:1.1rem;font-weight:700;line-height:2.1}.advisor{font-size:1rem;font-weight:700;margin-top:.9rem !important;line-height:2}.affil{font-size:.86rem;color:var(--soft);line-height:1.8}
+html.final,body.final{background:#e6e8eb;max-width:none !important;margin:0 !important;padding:0 !important;width:100%}
+body.final .sheet{box-sizing:border-box;background:#fff;width:210mm;max-width:calc(100% - 2rem);margin:2rem auto 4rem;padding:24mm 22mm 28mm;overflow:hidden;box-shadow:0 2px 18px rgba(0,0,0,.14)}
+body.final .sheet>*{max-width:100%}
+body.final .eq,body.final table{max-width:100%;overflow-x:auto;display:block}
+body.final table{width:max-content;margin:.5rem auto}
+body.final figure img{max-width:100%;height:auto;border:0;padding:0}
+body.final a.pn,body.final .hint,body.final .toc{display:none}
+body.final h1{margin-top:0;font-size:1.42rem;line-height:1.9}
+body.final .abs{background:#fff;border:0;border-top:1.6px solid #333;border-bottom:1.6px solid #333;border-radius:0;padding:1rem .2rem}
+body.final .abs h2{text-align:right;font-size:1rem}
+body.final figcaption{text-align:justify}
+body.final .foot{margin-top:3rem;border-top:1px solid var(--line);padding-top:.6rem;font-size:.82rem;color:var(--soft);text-align:center}
+body.final .pdfbar{position:fixed;top:14px;left:14px;z-index:9;direction:rtl}
+body.final .pdfbar button{font-family:inherit;font-size:.95rem;font-weight:700;color:#fff;background:var(--accent);border:0;border-radius:8px;padding:.55rem 1.1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+body.final .pdfbar button:hover{background:#083b78}
+body.final .pdfbar small{display:block;font-weight:400;font-size:.72rem;opacity:.85}
+@media (max-width:52rem){body.final .sheet{width:100%;max-width:100%;margin:0;padding:1.4rem 1.1rem;box-shadow:none}body.final .pdfbar{top:auto;bottom:14px}}
+@media print{html.final,body.final{background:#fff}body.final .sheet{width:auto;max-width:none;margin:0;padding:0;box-shadow:none;overflow:visible}body.final .pdfbar{display:none}body.final .eq,body.final table{overflow:visible}}
+@page{size:A4;margin:22mm 20mm}
+@media print{body{max-width:none;margin:0;font-size:11pt}.toc{display:none}figure,table{break-inside:avoid}h2{break-after:avoid}
  h2,h3{page-break-after:avoid}figure,.eq{page-break-inside:avoid}
  figure img{border:0;padding:0}a{color:inherit;text-decoration:none}
  a.pn,.hint{display:none}}
@@ -583,9 +623,15 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
  macros:{Fp:'F_p',nm:['#1\\\\,\\\\text{nm}',1]}},options:{enableMenu:false}};
 </script>
 <script defer src="@@MJ@@"></script>
-</head><body>
+</head><body class="@@CLS@@">
+@@PDFBAR@@<div class="@@SHEET@@">
 <h1>@@T@@</h1>
-@@AUTH@@
+<div class="byline">
+<p class="authors">امین حسین سدیدی &nbsp;·&nbsp; سید محمد پارسا مولایی طبری</p>
+<p class="affil">دانشجویان کارشناسی فیزیک، گروه فیزیک، دانشگاه اصفهان</p>
+<p class="advisor">استاد راهنما: دکتر مالک باقری هارونی</p>
+<p class="affil">عضو هیئت علمی گروه فیزیک، دانشگاه اصفهان</p>
+</div>
 <div class="hint">
 <b>این یک پیش‌نمایش برای بازبینی است، نه نسخه‌ی نهایی.</b>
 صفحه‌آرایی، شماره‌ی صفحه و شکستِ سطرها در PDF نهایی (XeLaTeX) تعیین
@@ -601,25 +647,23 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
 @@BODY@@
 <h2 id="refs">مراجع</h2>
 <ol class="refs">@@REFS@@</ol>
+@@FOOT@@
+</div>
 </body></html>
 """
 
+
+FINAL = '--final' in sys.argv
+PDFBAR = ('<div class="pdfbar"><button type="button" onclick="window.print()">'
+          '\u062f\u0627\u0646\u0644\u0648\u062f PDF'
+          '<small>\u062f\u0631 \u067e\u0646\u062c\u0631\u0647\u200c\u06cc \u0628\u0627\u0632\u0634\u062f\u0647 \u00ab\u0630\u062e\u06cc\u0631\u0647 \u0628\u0647 \u0635\u0648\u0631\u062a PDF\u00bb \u0631\u0627 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646\u06cc\u062f</small>'
+          '</button></div>')
 
 def main():
     main_tex = read_tex(os.path.join(MS, 'main.tex'))
 
     tm = re.search(r'\\title\{', main_tex)
     title = ' '.join(group(main_tex, tm.end() - 1)[0].split()) if tm else ''
-
-    # بلوک نویسنده/مشخصات پروژه: خطوط با \\ از هم جدا می‌شوند
-    aum = re.search(r'\\author\{', main_tex)
-    author_html = ''
-    if aum:
-        raw, _ = group(main_tex, aum.end() - 1)
-        lines = [inline(' '.join(ln.split())) for ln in raw.split('\\\\')]
-        lines = [ln for ln in lines if ln.strip()]
-        if lines:
-            author_html = '<div class="meta">%s</div>' % '<br>'.join(lines)
 
     am = re.search(r'\\begin\{abstract\}(.*?)\\end\{abstract\}', main_tex, re.S)
     abstract = am.group(1) if am else ''
@@ -668,11 +712,15 @@ def main():
         mj = MATHJAX_CDN
         print('MathJax: از CDN (برای نسخه‌ی آفلاین:'
               ' python tools/vendor_mathjax.py)')
-    for k, v in (('@@T@@', inline(title)), ('@@AUTH@@', author_html),
-                 ('@@ABS@@', abs_html), ('@@KW@@', kw_html), ('@@TOC@@', toc),
+    for k, v in (('@@T@@', inline(title)), ('@@ABS@@', abs_html),
+                 ('@@KW@@', kw_html), ('@@TOC@@', toc),
                  ('@@BODY@@', main_html), ('@@REFS@@', '\n'.join(refs)),
-                 ('@@MJ@@', mj)):
+                 ('@@MJ@@', mj), ('@@CLS@@', 'final' if FINAL else ''), ('@@SHEET@@', 'sheet' if FINAL else ''), ('@@PDFBAR@@', PDFBAR if FINAL else ''), ('@@FOOT@@', '<p class="foot">دانشگاه اصفهان — گروه فیزیک — ۱۴۰۵</p>' if FINAL else '')):
         doc = doc.replace(k, v)
+    if FINAL:
+        doc = re.sub(r'<div class="hint">.*?</div>\s*', '', doc, count=1, flags=re.S)
+        doc = re.sub(r'<nav class="toc">.*?</nav>\s*', '', doc, count=1, flags=re.S)
+        doc = re.sub(r'<a class="pn"[^>]*>[^<]*</a>', '', doc)
     doc = unkeep(doc)
 
     # ارجاع‌ها را حالا که همه‌ی برچسب‌ها شناخته شده‌اند جایگزین کن
@@ -695,12 +743,16 @@ def main():
         sys.stderr.write('هشدار: هیچ قلمی جاسازی نشد؛ متن با قلم پیش‌فرض'
                          ' سیستم دیده می‌شود.\n')
 
-    # شکل‌ها و MathJax را هم جاسازی کن تا پیش‌نمایش یک فایلِ خودبسنده باشد
     doc, imgs = inline_images(doc)
     print('تصویرهای جاسازی‌شده: %s' % (', '.join(imgs) if imgs else 'هیچ'))
     doc, mj_in = inline_mathjax(doc)
     print('MathJax: %s' % ('درون‌خطی (خودبسنده)' if mj_in
                            else 'برچسب src (نیازمند فایل کنار صفحه)'))
+    if FINAL:
+        # در نسخه‌ی نهایی، پیوند «نسخه‌ی برداری» دور تصویر حذف می‌شود:
+        # فایل تک‌فایل است و PDF کنار آن وجود ندارد.
+        doc = re.sub(r'<a href="figures/[^"]+\.pdf"[^>]*>(<img[^>]+>)</a>',
+                     r'\1', doc)
 
     open(OUT, 'w', encoding='utf-8', newline='\n').write(doc)
 

@@ -1,10 +1,10 @@
 tex files: 7
 missing \input targets: none
-bib entries: 28 ; cited keys: 28
+bib entries: 33 ; cited keys: 33
 undefined cite keys: none
 bib entries never cited: none
 references.bib matches draft/: True
 dangling \ref targets: none
 fig/tab/eq labels never referenced: none
-unreferenced section labels (informational): ['sec:appendix-nomenclature', 'sec:conclusion', 'sec:intro', 'sec:method', 'sec:results', 'sec:results-efficiency', 'sec:results-nearfield', 'sec:results-purcell', 'sec:results-radiated', 'sec:theory', 'sec:theory-distinction', 'sec:theory-origin', 'sec:theory-symmetry']
+unreferenced section labels (informational): ['sec:appendix-nomenclature', 'sec:intro', 'sec:method-model', 'sec:method-validation', 'sec:results-gap', 'sec:results-nearfield', 'sec:results-purcell', 'sec:results-sphere', 'sec:results-validity', 'sec:theory-distinction', 'sec:theory-origin']
 math macros used outside math mode: none

@@ -1,4 +1,4 @@
-DEFINED: 28
+DEFINED: 27
 USED: 15
 
 MISSING (cited but not in .bib): none
@@ -14,7 +14,6 @@ the existing article body, which is not a draft/*.md file):
     koenderink2017single
     maier2007plasmonics
     purcell1946spontaneous
-    sauvan2013theory
     taflove2005computational
     xu2023quantum
 BRACES balanced: True
