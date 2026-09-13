@@ -6,8 +6,10 @@
      یک align که در گذشته id نمی‌گرفت)
   ۲. قلم به‌شکل data: جاسازی شده باشد، وگرنه کروم در file:// آن را
      بارگیری نمی‌کند و متن با قلم پیش‌فرض سیستم دیده می‌شود
-  ۳. MathJax محلی باشد، نه CDN
+  ۳. MathJax محلی/درون‌خطی باشد، نه CDN
   ۴. هیچ دستور لاتک ترجمه‌نشده‌ای بیرون از ریاضی نمانده باشد
+  ۵. هیچ منبع بیرونی (تصویر با نشانی فایلی) نمانده باشد؛ پیش‌نمایش باید
+     یک فایلِ خودبسنده باشد تا در نمایشگر تک‌فایلی و file:// کامل دیده شود
 خروجی: چاپ در ترمینال؛ کد بازگشت ۱ اگر ایرادی پیدا شود.
 """
 import io
@@ -46,10 +48,19 @@ def main():
     if n_font < 2 or left:
         bad.append('قلم')
 
-    local_mj = 'vendor/mathjax' in doc
-    print('MathJax محلی: %s' % local_mj)
-    if not local_mj:
+    local_mj = ('vendor/mathjax' in doc) or ('mathjax-inline' in doc)
+    # معیار CDN فقط برچسب‌های واقعیِ بیرونی است؛ خود bundle درون‌خطی ممکن است
+    # در کد/کامنت‌هایش نشانی CDN داشته باشد و آن بی‌ضرر است.
+    cdn = bool(re.search(r'<script[^>]*\bsrc="https?://', doc))
+    print('MathJax محلی/درون‌خطی: %s | CDN: %s' % (local_mj, 'دارد!' if cdn
+                                                  else 'ندارد'))
+    if not local_mj or cdn:
         bad.append('MathJax')
+
+    ext_img = re.findall(r'<img src="(?!data:)[^"]+"', doc)
+    print('تصویر با نشانی بیرونی: %s' % (ext_img or 'ندارد'))
+    if ext_img:
+        bad.append('تصویر')
 
     plain = re.sub(r'<script.*?</script>|<div class="eq".*?</div>'
                    r'|\\\(.*?\\\)', '', doc, flags=re.S)

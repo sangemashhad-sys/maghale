@@ -144,6 +144,51 @@ def inline_fonts(doc):
     return re.sub(r'url\("([^"]+\.woff2)"\)', sub, doc), done
 
 
+def inline_images(doc):
+    """تصویرهای شکل‌ها را به data: تبدیل می‌کند.
+
+    دلیل: پیش‌نمایش باید یک فایلِ خودبسنده باشد تا در نمایشگر تک‌فایلی،
+    در zip بازبینی و در `file://` بدون هیچ منبع بیرونی کامل دیده شود؛
+    وگرنه شکل‌ها به‌صورت قاب شکسته نمایش داده می‌شوند.
+    """
+    done = []
+
+    def sub(m):
+        rel = m.group(1)
+        path = os.path.join(MS, rel.replace('/', os.sep))
+        if not os.path.isfile(path):
+            sys.stderr.write('هشدار: تصویر یافت نشد: %s\n' % rel)
+            return m.group(0)
+        with open(path, 'rb') as f:
+            b64 = base64.b64encode(f.read()).decode('ascii')
+        done.append(rel)
+        return 'src="data:image/png;base64,%s"' % b64
+
+    return re.sub(r'src="(figures/web/[^"]+)"', sub, doc), done
+
+
+def inline_mathjax(doc):
+    """کد MathJax محلی را داخل خود HTML می‌گذارد (خودبسندگی، مثل قلم و شکل).
+
+    برچسب <script defer src> فقط وقتی معنا دارد که فایل کنار صفحه قابل
+    دسترس باشد؛ در نمایشگر تک‌فایلی نیست. پس وقتی نسخه‌ی محلی موجود است،
+    کل bundle را درون‌خطی می‌کنیم. فایل tex-svg.js رشته‌ی </script ندارد
+    (پیش از این committing بررسی شده)، پس درون‌خطی‌کردن امن است.
+    """
+    rel = MATHJAX_LOCAL.replace(os.sep, '/')
+    tag = '<script defer src="%s"></script>' % rel
+    if tag not in doc:
+        return doc, False
+    path = os.path.join(MS, MATHJAX_LOCAL)
+    if not os.path.isfile(path):
+        return doc, False
+    js = open(path, encoding='utf-8').read()
+    if '</script' in js.lower():
+        sys.stderr.write('هشدار: MathJax رشته‌ی </script دارد؛ درون‌خطی نشد.\n')
+        return doc, False
+    return doc.replace(tag, '<script>/* mathjax-inline */\n%s\n</script>' % js), True
+
+
 def web_src(want):
     """(نشانی تصویر برای مرورگر، نشانی نسخه‌ی برداری) را برمی‌گرداند.
 
@@ -649,6 +694,13 @@ def main():
     else:
         sys.stderr.write('هشدار: هیچ قلمی جاسازی نشد؛ متن با قلم پیش‌فرض'
                          ' سیستم دیده می‌شود.\n')
+
+    # شکل‌ها و MathJax را هم جاسازی کن تا پیش‌نمایش یک فایلِ خودبسنده باشد
+    doc, imgs = inline_images(doc)
+    print('تصویرهای جاسازی‌شده: %s' % (', '.join(imgs) if imgs else 'هیچ'))
+    doc, mj_in = inline_mathjax(doc)
+    print('MathJax: %s' % ('درون‌خطی (خودبسنده)' if mj_in
+                           else 'برچسب src (نیازمند فایل کنار صفحه)'))
 
     open(OUT, 'w', encoding='utf-8', newline='\n').write(doc)
 
