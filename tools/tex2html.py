@@ -541,7 +541,21 @@ code{direction:ltr;display:inline-block;font-size:.9em;
 @media (max-width:34rem){body{font-size:.98rem;line-height:1.95;
  margin:1.2rem auto}h1{font-size:1.3rem}a.pn{display:none}}
 .byline{text-align:center;margin:0 0 2rem}.byline p{margin:0;text-align:center}.authors{font-size:1.1rem;font-weight:700;line-height:2.1}.advisor{font-size:1rem;font-weight:700;margin-top:.9rem !important;line-height:2}.affil{font-size:.86rem;color:var(--soft);line-height:1.8}
-body.final{--maxw:52rem}body.final a.pn,body.final .hint,body.final .toc{display:none}body.final h1{margin-top:1rem}body.final .abs{background:#fff;border:0;border-top:1.6px solid #333;border-bottom:1.6px solid #333;border-radius:0;padding:1rem .2rem}body.final .abs h2{text-align:right;font-size:1rem}body.final figure img{border:0;padding:0}body.final figcaption{text-align:justify}body.final .foot{margin-top:3rem;border-top:1px solid var(--line);padding-top:.6rem;font-size:.82rem;color:var(--soft);text-align:center}
+body.final{background:#e9ebee;max-width:none;margin:0;padding:2.2rem 0 4rem}
+body.final .sheet{background:#fff;max-width:210mm;margin:0 auto;padding:26mm 24mm 30mm;
+ box-shadow:0 2px 18px rgba(0,0,0,.14);border-radius:2px}
+body.final a.pn,body.final .hint,body.final .toc{display:none}
+body.final h1{margin-top:0;font-size:1.45rem}
+body.final .abs{background:#fff;border:0;border-top:1.6px solid #333;border-bottom:1.6px solid #333;border-radius:0;padding:1rem .2rem}
+body.final .abs h2{text-align:right;font-size:1rem}
+body.final figure img{border:0;padding:0}body.final figcaption{text-align:justify}
+body.final .foot{margin-top:3rem;border-top:1px solid var(--line);padding-top:.6rem;font-size:.82rem;color:var(--soft);text-align:center}
+body.final .pdfbar{position:fixed;top:14px;left:14px;z-index:9;display:flex;gap:8px;direction:rtl}
+body.final .pdfbar button{font-family:inherit;font-size:.95rem;font-weight:700;color:#fff;background:var(--accent);border:0;border-radius:8px;padding:.55rem 1.1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+body.final .pdfbar button:hover{background:#083b78}
+body.final .pdfbar small{display:block;font-weight:400;font-size:.72rem;opacity:.85}
+@media (max-width:52rem){body.final{padding:0}body.final .sheet{padding:1.6rem 1.2rem;box-shadow:none;border-radius:0}}
+@media print{body.final{background:#fff;padding:0}body.final .sheet{max-width:none;margin:0;padding:0;box-shadow:none}body.final .pdfbar{display:none}}
 @page{size:A4;margin:22mm 20mm}
 @media print{body{max-width:none;margin:0;font-size:11pt}.toc{display:none}figure,table{break-inside:avoid}h2{break-after:avoid}
  h2,h3{page-break-after:avoid}figure,.eq{page-break-inside:avoid}
@@ -554,6 +568,7 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
 </script>
 <script defer src="@@MJ@@"></script>
 </head><body class="@@CLS@@">
+@@PDFBAR@@<div class="@@SHEET@@">
 <h1>@@T@@</h1>
 <div class="byline">
 <p class="authors">امین حسین سدیدی &nbsp;·&nbsp; سید محمد پارسا مولایی طبری</p>
@@ -577,11 +592,16 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
 <h2 id="refs">مراجع</h2>
 <ol class="refs">@@REFS@@</ol>
 @@FOOT@@
+</div>
 </body></html>
 """
 
 
 FINAL = '--final' in sys.argv
+PDFBAR = ('<div class="pdfbar"><button type="button" onclick="window.print()">'
+          '\u062f\u0627\u0646\u0644\u0648\u062f PDF'
+          '<small>\u062f\u0631 \u067e\u0646\u062c\u0631\u0647\u200c\u06cc \u0628\u0627\u0632\u0634\u062f\u0647 \u00ab\u0630\u062e\u06cc\u0631\u0647 \u0628\u0647 \u0635\u0648\u0631\u062a PDF\u00bb \u0631\u0627 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646\u06cc\u062f</small>'
+          '</button></div>')
 
 def main():
     main_tex = read_tex(os.path.join(MS, 'main.tex'))
@@ -639,7 +659,7 @@ def main():
     for k, v in (('@@T@@', inline(title)), ('@@ABS@@', abs_html),
                  ('@@KW@@', kw_html), ('@@TOC@@', toc),
                  ('@@BODY@@', main_html), ('@@REFS@@', '\n'.join(refs)),
-                 ('@@MJ@@', mj), ('@@CLS@@', 'final' if FINAL else ''), ('@@FOOT@@', '<p class="foot">دانشگاه اصفهان — گروه فیزیک — ۱۴۰۵</p>' if FINAL else '')):
+                 ('@@MJ@@', mj), ('@@CLS@@', 'final' if FINAL else ''), ('@@SHEET@@', 'sheet' if FINAL else ''), ('@@PDFBAR@@', PDFBAR if FINAL else ''), ('@@FOOT@@', '<p class="foot">دانشگاه اصفهان — گروه فیزیک — ۱۴۰۵</p>' if FINAL else '')):
         doc = doc.replace(k, v)
     if FINAL:
         doc = re.sub(r'<div class="hint">.*?</div>\s*', '', doc, count=1, flags=re.S)
