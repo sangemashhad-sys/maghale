@@ -532,7 +532,7 @@ h2{font-size:1.2rem;line-height:1.8;font-weight:700;margin:2.6rem 0 .9rem;
  padding-bottom:.35rem;border-bottom:2px solid var(--line)}
 h3{font-size:1.06rem;line-height:1.8;font-weight:700;margin:1.9rem 0 .6rem;
  color:#22262e}
-p{margin:0 0 .85rem}
+p{margin:0 0 .85rem;overflow-wrap:break-word}
 p[id^="p"]{position:relative}
 a.pn{position:absolute;inset-inline-start:-2.35rem;top:.45rem;font-size:.72rem;
  line-height:1;color:#b9c0ca;text-decoration:none;direction:ltr;
@@ -648,7 +648,8 @@ body.final .pdfbar small{display:block;font-weight:400;font-size:.72rem;
  body.final .sheet{width:auto;max-width:none;margin:0;padding:0;
   box-shadow:none;overflow:hidden}
  body.final .pdfbar{display:none}
- body{max-width:none;margin:0;font-size:11pt;padding:0;overflow:hidden}
+ body{max-width:none;margin:0;font-size:11pt;padding:0;overflow:hidden;
+  text-align:right}
  /* تور امن: هیچ عنصری نمی‌تواند پهن‌تر از جعبه‌ی صفحه شود */
  .sheet *{max-width:100%;min-width:0}
  p,li,td,th,figcaption,h1,h2,h3{overflow-wrap:break-word}
@@ -662,12 +663,12 @@ body.final .pdfbar small{display:block;font-weight:400;font-size:.72rem;
  a{color:inherit;text-decoration:none}
  /* جدول: چیدمان ثابت = عرض جدول هرگز از صفحه بیشتر نمی‌شود */
  .tblwrap{overflow:visible}
- table{width:100%;table-layout:fixed;font-size:8.5pt;line-height:1.6}
+ table{width:100%;table-layout:fixed;font-size:8pt;line-height:1.55}
  th,td{padding:.25rem .5rem;white-space:normal;word-wrap:break-word;
   overflow-wrap:anywhere}
  /* رابطه‌ها: کوچک‌سازی + مقیاس SVG؛ اگر باز هم بلند بود بریده می‌شود
     نه اینکه از صفحه بیرون بزند */
- .eq{font-size:9pt;overflow:hidden}
+ .eq{font-size:8.5pt;overflow:hidden}
  mjx-container{max-width:100% !important}
  mjx-container svg{max-width:100% !important;height:auto !important}
  ol.refs li{font-size:8.5pt}
