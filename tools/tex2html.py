@@ -513,7 +513,7 @@ PAGE = """<!DOCTYPE html>
 <html lang="fa" dir="rtl" class="@@CLS@@"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>@@T@@</title>
+<title>پروژه‌ی کارشناسی فیزیک — دانشگاه اصفهان</title>
 <style>
 @font-face{font-family:"Vazirmatn";src:url("fonts/Vazirmatn-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
 @font-face{font-family:"Vazirmatn";src:url("fonts/Vazirmatn-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
@@ -642,14 +642,14 @@ body.final .pdfbar small{display:block;font-weight:400;font-size:.72rem;
  opacity:.85}
 @media (max-width:52rem){body.final .sheet{width:100%;max-width:100%;margin:0;
  padding:1.4rem 1.1rem;box-shadow:none}body.final .pdfbar{top:auto;bottom:14px}}
-@page{size:A4;margin:0}
+@page{size:A4;margin:16mm 15mm}
 @media print{
  html.final,body.final{background:#fff}
  body.final .sheet{width:auto;max-width:none;margin:0;padding:0;
   box-shadow:none;overflow:hidden}
  body.final .pdfbar{display:none}
  body{max-width:none;margin:0;font-size:11pt;overflow:hidden;
-  text-align:right;padding:16mm 15mm}
+  text-align:right;padding:0}
  /* تور امن: هیچ عنصری نمی‌تواند پهن‌تر از جعبه‌ی صفحه شود */
  .sheet *{max-width:100%;min-width:0}
  p,li,td,th,figcaption,h1,h2,h3{overflow-wrap:break-word}
