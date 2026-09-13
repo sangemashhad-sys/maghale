@@ -642,14 +642,14 @@ body.final .pdfbar small{display:block;font-weight:400;font-size:.72rem;
  opacity:.85}
 @media (max-width:52rem){body.final .sheet{width:100%;max-width:100%;margin:0;
  padding:1.4rem 1.1rem;box-shadow:none}body.final .pdfbar{top:auto;bottom:14px}}
-@page{size:A4;margin:22mm 20mm}
+@page{size:A4;margin:0}
 @media print{
  html.final,body.final{background:#fff}
  body.final .sheet{width:auto;max-width:none;margin:0;padding:0;
   box-shadow:none;overflow:hidden}
  body.final .pdfbar{display:none}
- body{max-width:none;margin:0;font-size:11pt;padding:0;overflow:hidden;
-  text-align:right}
+ body{max-width:none;margin:0;font-size:11pt;overflow:hidden;
+  text-align:right;padding:16mm 15mm}
  /* تور امن: هیچ عنصری نمی‌تواند پهن‌تر از جعبه‌ی صفحه شود */
  .sheet *{max-width:100%;min-width:0}
  p,li,td,th,figcaption,h1,h2,h3{overflow-wrap:break-word}
