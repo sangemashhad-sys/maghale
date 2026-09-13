@@ -317,8 +317,12 @@ def inline(text):
                 .replace('\\%', '%').replace('\\&', '&').replace('\\_', '_')
                 .replace('---', '\u2014').replace('--', '\u2013'))
     for junk in ('\\noindent', '\\centering', '\\bigskip', '\\medskip',
-                 '\\maketitle', '\\newpage', '\\clearpage'):
+                 '\\maketitle', '\\newpage', '\\clearpage', '\\appendix',
+                 '\\tableofcontents'):
         text = text.replace(junk, '')
+    # \addcontentsline فقط برای فهرستِ خروجی LaTeX است؛ در HTML فهرست خودمان
+    # را داریم، پس آن را دور می‌اندازیم.
+    text = re.sub(r'\\addcontentsline\{[^}]*\}\{[^}]*\}\{[^}]*\}', '', text)
     return text
 
 
@@ -385,7 +389,7 @@ def body_html(text, number=False):
     بتواند در بازخوردش به «پاراگراف ۱۲» ارجاع دهد.
     """
     pieces, pos = [], 0
-    pat = re.compile(r'\\(section|subsection)\*?\{')
+    pat = re.compile(r'\\(section|subsection)(\*?)\{')
     while True:
         m = pat.search(text, pos)
         if not m:
@@ -395,21 +399,26 @@ def body_html(text, number=False):
         title, after = group(text, m.end() - 1)
         lm = re.match(r'\s*\\label\{([^}]+)\}', text[after:after + 200])
         label = lm.group(1) if lm else ''
+        starred = m.group(2) == '*'
         if m.group(1) == 'section':
-            N['sec'] += 1
+            if not starred:
+                N['sec'] += 1
             N['sub'] = 0
-            num, tag = str(N['sec']), 'h2'
+            num, tag = ('' if starred else str(N['sec'])), 'h2'
         else:
-            N['sub'] += 1
-            num, tag = '%d.%d' % (N['sec'], N['sub']), 'h3'
-        anchor = label or 'sec' + num.replace('.', '-')
+            if not starred:
+                N['sub'] += 1
+            num, tag = ('' if starred else '%d.%d' % (N['sec'], N['sub'])), 'h3'
+        anchor = label or 'sec' + num.replace('.', '-') or 'sec-u%d' % len(TOC)
         if label:
             LABELS[label] = num
         head = inline(' '.join(title.split()))
         TOC.append((tag, num, head, anchor))
-        pieces.append('\n\n' + keep('<%s id="%s"><span class="n">%s</span> %s'
-                                    '</%s>' % (tag, html.escape(anchor), num,
-                                               head, tag)) + '\n\n')
+        pieces.append('\n\n' + keep('<%s id="%s">%s%s</%s>'
+                                    % (tag, html.escape(anchor),
+                                       ('<span class="n">%s</span> ' % num)
+                                       if num else '',
+                                       head, tag)) + '\n\n')
         pos = after + (lm.end() if lm else 0)
     text = ''.join(pieces)
 
@@ -469,6 +478,9 @@ a{color:var(--accent)}
 h2 .n,h3 .n{color:var(--num);font-weight:700;margin-inline-end:.35rem}
 .abs{background:var(--tint);border:1px solid var(--line);border-radius:8px;
  padding:1.1rem 1.35rem;font-size:.97rem;line-height:1.95}
+.meta{text-align:center;color:var(--soft);font-size:.95rem;line-height:2.05;
+ margin:-.4rem 0 1.5rem}
+.meta b{color:var(--ink)}
 .abs h2{border:0;margin:0 0 .6rem;padding:0;font-size:1.02rem;
  text-align:center;letter-spacing:.02em}
 .kw{font-size:.92rem;color:var(--soft);line-height:1.9;margin:.9rem 0 1.6rem}
@@ -528,6 +540,7 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
 <script defer src="@@MJ@@"></script>
 </head><body>
 <h1>@@T@@</h1>
+@@AUTH@@
 <div class="hint">
 <b>این یک پیش‌نمایش برای بازبینی است، نه نسخه‌ی نهایی.</b>
 صفحه‌آرایی، شماره‌ی صفحه و شکستِ سطرها در PDF نهایی (XeLaTeX) تعیین
@@ -553,6 +566,16 @@ def main():
     tm = re.search(r'\\title\{', main_tex)
     title = ' '.join(group(main_tex, tm.end() - 1)[0].split()) if tm else ''
 
+    # بلوک نویسنده/مشخصات پروژه: خطوط با \\ از هم جدا می‌شوند
+    aum = re.search(r'\\author\{', main_tex)
+    author_html = ''
+    if aum:
+        raw, _ = group(main_tex, aum.end() - 1)
+        lines = [inline(' '.join(ln.split())) for ln in raw.split('\\\\')]
+        lines = [ln for ln in lines if ln.strip()]
+        if lines:
+            author_html = '<div class="meta">%s</div>' % '<br>'.join(lines)
+
     am = re.search(r'\\begin\{abstract\}(.*?)\\end\{abstract\}', main_tex, re.S)
     abstract = am.group(1) if am else ''
 
@@ -576,9 +599,9 @@ def main():
     text = take_floats(take_math('\n\n'.join(src)))
     main_html = body_html(text, number=True)
 
-    toc = '\n'.join('<div class="%s"><a href="#%s"><span class="n">%s</span> %s'
-                    '</a></div>' % ('s' if tag == 'h3' else 'm',
-                                    html.escape(a), num, t)
+    toc = '\n'.join('<div class="%s"><a href="#%s">%s%s</a></div>'
+                    % ('s' if tag == 'h3' else 'm', html.escape(a),
+                       ('<span class="n">%s</span> ' % num) if num else '', t)
                     for tag, num, t, a in TOC)
 
     entries = bib(os.path.join(MS, 'references.bib'))
@@ -600,8 +623,8 @@ def main():
         mj = MATHJAX_CDN
         print('MathJax: از CDN (برای نسخه‌ی آفلاین:'
               ' python tools/vendor_mathjax.py)')
-    for k, v in (('@@T@@', inline(title)), ('@@ABS@@', abs_html),
-                 ('@@KW@@', kw_html), ('@@TOC@@', toc),
+    for k, v in (('@@T@@', inline(title)), ('@@AUTH@@', author_html),
+                 ('@@ABS@@', abs_html), ('@@KW@@', kw_html), ('@@TOC@@', toc),
                  ('@@BODY@@', main_html), ('@@REFS@@', '\n'.join(refs)),
                  ('@@MJ@@', mj)):
         doc = doc.replace(k, v)
