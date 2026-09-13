@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>اسلایدهای ارائه — نانومیله‌ی پلاسمونی طلا و گسیل خودبه‌خودی</title>
+<style>
+/* قلم وزیرمتن: build_slides.py هر دو نشانی زیر را پیش از نوشتن خروجی به
+   data: تبدیل می‌کند تا اسلایدها بدون اینترنت و حتی از file:// درست دیده
+   شوند (کروم بارگیری قلم از فایل کنار را با CORS رد می‌کند). */
+@font-face{font-family:"Vazirmatn";src:url("__FONT_REG__") format("woff2");
+ font-weight:400;font-display:swap}
+@font-face{font-family:"Vazirmatn";src:url("__FONT_BOLD__") format("woff2");
+ font-weight:700;font-display:swap}
+:root{--ink:#16181d;--soft:#5b6472;--line:#e3e6ea;--tint:#f6f8fa;
+ --accent:#0b4fa0;--num:#8a1c1c}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:"Vazirmatn","Tahoma",sans-serif;background:#20242b;
+ color:var(--ink);-webkit-font-smoothing:antialiased}
+.slide{display:none;position:absolute;inset:0;overflow:auto;
+ background:#fff;padding:3.2rem 4.5rem 4.6rem;line-height:1.95}
+.slide.on{display:block}
+.slide h1{font-size:2rem;line-height:1.7;margin:0 0 1.4rem;font-weight:700;
+ color:var(--accent)}
+.slide h2{font-size:1.5rem;line-height:1.7;margin:0 0 1.2rem;font-weight:700;
+ border-bottom:3px solid var(--accent);padding-bottom:.5rem}
+.slide ul{margin:0;padding-inline-start:1.5rem;font-size:1.22rem}
+.slide li{margin:.55rem 0}
+.slide li::marker{color:var(--accent);font-weight:700}
+.slide p{font-size:1.22rem;margin:.6rem 0}
+.small{font-size:1rem !important;color:var(--soft)}
+.title-slide{display:none;text-align:center;align-content:center;
+ justify-items:center}
+.title-slide.on{display:grid}
+.title-slide h1{font-size:1.75rem;color:var(--ink);max-width:52rem}
+.title-slide .who{margin-top:2.2rem;font-size:1.3rem;line-height:2.4}
+.title-slide .who b{color:var(--accent)}
+.title-slide .tag{color:var(--soft);font-size:1.05rem;margin-top:1.6rem}
+.eqbox{background:var(--tint);border:1px solid var(--line);border-radius:10px;
+ padding:.9rem 1.4rem;margin:1rem 0;font-size:1.25rem;text-align:center}
+figure{margin:1rem 0;text-align:center}
+figure img{max-width:min(78%,52rem);max-height:56vh;border:1px solid var(--line);
+ border-radius:8px;padding:.3rem;background:#fff}
+figcaption{font-size:.98rem;color:var(--soft);margin-top:.5rem}
+table{border-collapse:collapse;margin:.6rem auto;font-size:1.12rem}
+th,td{padding:.4rem 1.1rem;border-bottom:1px solid var(--line);text-align:right}
+th{background:var(--tint);border-top:1.6px solid #333;
+ border-bottom:1.2px solid #333;font-weight:700}
+tr:last-child td{border-bottom:1.6px solid #333}
+.hl{color:var(--num);font-weight:700}
+.notes{display:none;margin-top:1.6rem;border-inline-start:4px solid var(--accent);
+ background:var(--tint);border-radius:8px;padding:.8rem 1.2rem;font-size:1.02rem;
+ color:var(--soft)}
+body.show-notes .notes{display:block}
+.notes b{color:var(--ink)}
+.hud{position:fixed;bottom:0;inset-inline:0;display:flex;gap:.6rem;
+ align-items:center;justify-content:center;padding:.55rem 1rem;
+ background:rgba(22,24,29,.92);color:#e8eaee;font-size:.92rem;z-index:9}
+.hud button{font:inherit;background:#2c313a;color:#e8eaee;border:1px solid #3a4049;
+ border-radius:6px;padding:.25rem .8rem;cursor:pointer}
+.hud button:hover{background:#3a4049}
+.hud .cnt{direction:ltr;font-family:"Times New Roman",serif;min-width:3.2rem;
+ text-align:center}
+.bar{position:fixed;top:0;inset-inline:0;height:4px;background:#3a4049;z-index:9}
+.bar i{display:block;height:100%;background:var(--accent);width:0}
+@media print{
+ body{background:#fff}
+ .slide{display:block !important;position:static;page-break-after:always;
+  overflow:visible;min-height:96vh}
+ .hud,.bar{display:none}
+ .notes{display:none !important}
+}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],tags:'none',
+ macros:{Fp:'F_p',nm:['#1\\,\\text{nm}',1]}},options:{enableMenu:false}};
+</script>
+<script defer src="__MJ__"></script>
+</head>
+<body>
+<div class="bar"><i id="bar"></i></div>
+
+<!-- ============================ ۱ ============================ -->
+<section class="slide title-slide">
+  <h1>بررسی عددی تقویت گسیل خودبه‌خودی و راندمان تابشی گسیل‌گر کوانتومی
+  در مجاورت نانومیله پلاسمونی طلا با روش 3D-FDTD</h1>
+  <div class="who">
+    دانشجویان: <b>[نام دانشجویان]</b><br>
+    استاد درس: <b>[نام استاد]</b>
+  </div>
+  <div class="tag">محدودیت توصیف همسانگرد نرخ گسیل در هندسه‌های ناهمسانگرد</div>
+  <div class="notes"><b>یادداشت:</b> یک جمله‌ی آغازین: «کار ما دو بخش دارد:
+  یک شبیه‌سازی عددی دقیق، و یک argument انتقادی درباره‌ی حد اعتبار مدل‌های
+  همسانگرد.»</div>
+</section>
+
+<!-- ============================ ۲ ============================ -->
+<section class="slide">
+  <h2>پرسش و انگیزه</h2>
+  <ul>
+    <li>نرخ گسیل خودبه‌خودی خاصیت ذاتی اتم <b>نیست</b>؛ به محیط فوتونی
+    اطراف وابسته است — اثر پورسل (۱۹۴۶).</li>
+    <li>کاواک دی‌الکتریک: حجم مدی بزرگ (محدود به حد پراش).
+    فلز پلاسمونی: فشرده‌سازی نور به زیر حد پراش،
+    \(V_{\text{mode}} \ll \lambda^3\).</li>
+    <li>نانومیله‌ی طلا: تشدید طولی تنظیم‌پذیر در مرئی + میدان متمرکز در نوک
+    (اثر رعدوبرق).</li>
+    <li>چالش: رقابت میان <b>تقویت تابشی</b> و <b>خاموشی غیرتابشی</b>
+    (Quenching) در فاصله‌ی نانومتری از فلز.</li>
+  </ul>
+  <div class="notes"><b>بگویید:</b> «همین که یک مولکول را کنار یک نانوذره
+  می‌گذاریم، عمر تراز برانگیخته‌اش عوض می‌شود.» کاربرد: چشمه‌ی تک‌فوتونی،
+  حسگر زیستی، نانوآنتن.</div>
+</section>
+
+<!-- ============================ ۳ ============================ -->
+<section class="slide">
+  <h2>سه کمیت کلیدی</h2>
+  <div class="eqbox">\(\Fp = \dfrac{\Gamma_{\text{tot}}}{\Gamma_0}
+   = \dfrac{P_{\text{tot}}}{P_0}\) &nbsp;— همه‌ی کانال‌ها (تابشی + اهمی)</div>
+  <div class="eqbox">\(T = \dfrac{P_{\text{rad}}}{P_0}\) &nbsp;— فقط آنچه به
+   میدان دوردست می‌رسد</div>
+  <div class="eqbox">\(\eta_a = \dfrac{T}{\Fp}\) &nbsp;— بازده کوانتومی ظاهری</div>
+  <p>تمام حرف مقاله در یک جمله: <span class="hl">این سه کمیت را نمی‌شود با یک
+  عدد اسکالر خلاصه کرد.</span></p>
+  <div class="notes"><b>بگویید:</b> \(P_0\) توان دوقطبی در فضای آزاد است؛
+  \(\Fp\) از کار میدان واکنشی روی دوقطبی، و \(T\) از انتگرال پوئینتینگ روی
+  جعبه‌ی بسته.</div>
+</section>
+
+<!-- ============================ ۴ ============================ -->
+<section class="slide">
+  <h2>تز انتقادی: دامنه‌ی اعتبار توصیف همسانگرد</h2>
+  <ul>
+    <li>زبان رایج — ضرایب اینشتین، برچسب‌های \(s,p,d\)، برچسب چندقطبی
+    \(l,m\)، مدل هیبریداسیون — همه از <b>تقارن کروی</b> آمده‌اند
+    (جداسازی متغیرها در مختصات کروی).</li>
+    <li>نانومیله تقارن کروی ندارد: \(SO(3) \rightarrow C_{\infty v}\).</li>
+    <li>پیامد دقیق: \(m\) و \(\beta\) اعداد کوانتومی خوب می‌مانند؛
+    <span class="hl">\(l\) و تبهگنی \((2l+1)\) نه.</span></li>
+    <li>نشانه‌ی تجربی: کره <b>یک</b> تشدید دارد، میله <b>دو</b> تشدید
+    (طولی و عرضی) — Sönnichsen 2002.</li>
+  </ul>
+  <div class="notes"><b>هشدار بیان:</b> نگویید «برچسب کروی غلط است»؛ بگویید
+  «دامنه‌ی اعتبار محدودی دارد». این دقیق‌ترین جمله‌ی مقاله و بهترین سپر در
+  برابر ایراد است.</div>
+</section>
+
+<!-- ============================ ۵ ============================ -->
+<section class="slide">
+  <h2>هندسه و روش شبیه‌سازی</h2>
+  <table>
+    <tr><th>پارامتر</th><th>مقدار</th></tr>
+    <tr><td>نانومیله (بدنه + دو کلاهک نیم‌کروی)</td>
+        <td>\(L=\nm{60}\)، \(D=\nm{20}\)، \(R=\nm{10}\)</td></tr>
+    <tr><td>دوقطبی طولی، روی محور تقارن</td>
+        <td>\(z=\nm{35}\) (گپ \(\nm{5}\) تا راس کلاهک)</td></tr>
+    <tr><td>روش / ماده</td><td>3D-FDTD / طلا: Johnson &amp; Christy</td></tr>
+    <tr><td>مش موضعی</td><td>\(\nm{2}\) روی \(40\times40\times80\) nm</td></tr>
+    <tr><td>جعبه‌ی توان / ناحیه‌ی FDTD</td>
+        <td>مکعب \(\nm{400}\) / مکعب \(\nm{600}\) با PML</td></tr>
+  </table>
+  <p class="small">اعتبار مدل کلاسیک موضعی: گپ ۵ nm بسیار بزرگ‌تر از آستانه‌ی
+  تونل‌زنی (~۱ nm)؛ قطر میله بزرگ‌تر از حد ~۱۰ nm.</p>
+  <div class="notes"><b>بگویید:</b> توان تابشی از انتگرال بردار پوئینتینگ روی
+  جعبه‌ی بسته؛ جعبه حداقل ۱۰۰ nm از PML فاصله دارد تا بازتاب عددی وارد شار
+  نشود.</div>
+</section>
+
+<!-- ============================ ۶ ============================ -->
+<section class="slide">
+  <h2>نتیجه‌ی ۱: طیف فاکتور پورسل</h2>
+  <figure>
+    <img src="../manuscript/figures/web/Purcell_Spectrum.png"
+         alt="طیف فاکتور پورسل">
+    <figcaption>قله: \(\Fp \approx 2020.48\) در \(\nm{607.9}\) — بیش از سه
+    مرتبه بزرگی شتاب در نرخ واپاشی کل</figcaption>
+  </figure>
+  <div class="notes"><b>بگویید:</b> قله‌ی سمت چپ مد عرضی/مرتبه‌بالاست؛ قله‌ی
+  اصلی مد دوقطبی طولی. افزایش LDOS در نوک میله علت اصلی است.</div>
+</section>
+
+<!-- ============================ ۷ ============================ -->
+<section class="slide">
+  <h2>نتیجه‌ی ۲: توان تابشی و جابه‌جایی سرخ</h2>
+  <figure>
+    <img src="../manuscript/figures/web/radiated_power_T.png"
+         alt="طیف توان تابشی">
+    <figcaption>قله: \(T_{\max} = 143.42\) در \(\nm{615.1}\)</figcaption>
+  </figure>
+  <p>جابه‌جایی سرخ دو قله: <span class="hl">حدود \(\nm{7.2}\)</span> — ناشی از
+  پاشندگی اتلافی طلا و تبدیل مدهای میدان نزدیک به امواج منتشره.</p>
+  <div class="notes"><b>بگویید:</b> «اگر کل سیستم با یک ضریب اسکالر
+  توصیف‌پذیر بود، این دو قله باید روی هم می‌افتادند. نیفتاده‌اند.»</div>
+</section>
+
+<!-- ============================ ۸ ============================ -->
+<section class="slide">
+  <h2>نتیجه‌ی ۳: بازده، خاموشی و میدان نزدیک</h2>
+  <ul>
+    <li>\(\eta_a = 7.1\%\) در تشدید ⇒ حدود \(92.9\%\) انرژی به گرما می‌رود:
+    \(\Fp - T = 1877.06\).</li>
+    <li>با این حال تقویت تابشی ۱۴۳ برابری ⇒ میله همچنان نانوآنتن تابشی
+    مؤثر است.</li>
+  </ul>
+  <figure>
+    <img src="../manuscript/figures/web/NearField_Profile.png"
+         alt="نقشه میدان نزدیک">
+    <figcaption>نقاط داغ در نوک کلاهک‌ها؛ تقارن پروفیل ⇒ مد دوقطبی طولی</figcaption>
+  </figure>
+  <div class="notes"><b>پرسش محتمل:</b> «بازده ۷٪ یعنی شکست؟» پاسخ: نه؛ یعنی
+  رقابت تابش/اتلاف در گپ ۵ nm به نفع اتلاف است، ولی ۱۴۳ برابر تقویت تابشی
+  برای تقویت فلورسانس ارزشمند است.</div>
+</section>
+
+<!-- ============================ ۹ ============================ -->
+<section class="slide">
+  <h2>نتیجه‌ی ۴: دلالت انتقادی</h2>
+  <ul>
+    <li>دو قله‌ی جدا + بازده‌ی وابسته به طول‌موج ⇒ \(\Fp\) و \(T\)
+    <b>دو کمیت مستقل‌اند</b>؛ هیچ توصیف تک‌پارامتری (مثل \(A_{21}\)) هر دو را
+    بازتولید نمی‌کند.</li>
+    <li>جهت‌گیری دوقطبی: چرخش از طولی به عرضی تا <b>سه مرتبه بزرگی</b>
+    \(\Fp\) را جابه‌جا می‌کند (مرور Barreda 2022: \(10^{3.5}\) افقی در برابر
+    \(10^{6.5}\) عمودی).</li>
+    <li>میانگین‌گیری روی جهت‌گیری = تحمیل دستیِ همسانگردی‌ای که هندسه
+    <b>ندارد</b>.</li>
+    <li>در گپ‌های زیر ~۵ nm تعریف LDOS و تعریف مد کاواک از هم واگرا می‌شوند
+    (نظریه‌ی مدهای شبه‌نرمال: Sauvan 2013)؛ گپ ما دقیقاً ۵ nm است.</li>
+  </ul>
+  <div class="notes"><b>پرسش محتمل:</b> «چرا دوقطبی عرضی را شبیه‌سازی
+  نکردید؟» پاسخ: هدف قوی‌ترین کانال جفت‌شدگی بود؛ برای ایجاز به مراجع واگذار
+  شد — این جمله عیناً در زیربخش ۴.۵ مقاله هست.</div>
+</section>
+
+<!-- ============================ ۱۰ ============================ -->
+<section class="slide">
+  <h2>جمع‌بندی و مرزهای ادعا</h2>
+  <ul>
+    <li>توصیف همسانگرد معتبر است تنها اگر: (الف) بدون محور ممتاز،
+    (ب) بازده نزدیک به یک، (پ) فاصله‌ی کافی از سطح.
+    <span class="hl">سیستم ما هر سه را نقض می‌کند.</span></li>
+    <li>الزام روش‌شناختی: گزارش \(\Fp\) و \(T\) به‌صورت دو طیف مستقل + تصریح
+    جهت‌گیری دوقطبی.</li>
+    <li>مرز ادعا: برای <b>کره</b> برچسب‌های \(l,m\) و نظریه‌ی می کاملاً
+    معتبرند؛ سخن فقط بر سر دامنه‌ی اعتبار است.</li>
+    <li>کار آینده: پایه‌ی مدی استوانه‌ای \((m,\beta)\) برای هندسه‌ی
+    کلاهک‌دار.</li>
+  </ul>
+  <div class="notes"><b>پایان:</b> سه شرط را بلند بشمارید؛ این جمله بهترین
+  جمع‌بندی کل ارائه است. سپس دعوت به پرسش.</div>
+</section>
+
+<div class="hud">
+  <button id="prev">◀ قبلی</button>
+  <span class="cnt" id="cnt">1 / 10</span>
+  <button id="next">بعدی ▶</button>
+  <button id="notes-btn">یادداشت‌ها</button>
+  <span class="small" style="color:#9aa1ac">کلیدها: →/Space بعدی، ← قبلی،
+  N یادداشت‌ها</span>
+</div>
+
+<script>
+(function(){
+  var S=[].slice.call(document.querySelectorAll('.slide')),i=0;
+  function show(k){
+    i=Math.max(0,Math.min(S.length-1,k));
+    S.forEach(function(s,j){s.classList.toggle('on',j===i)});
+    document.getElementById('cnt').textContent=(i+1)+' / '+S.length;
+    document.getElementById('bar').style.width=
+      (100*(i+1)/S.length).toFixed(1)+'%';
+    location.hash='s'+(i+1);
+    if(window.MathJax&&MathJax.typesetPromise){MathJax.typesetPromise([S[i]])}
+  }
+  document.getElementById('next').onclick=function(){show(i+1)};
+  document.getElementById('prev').onclick=function(){show(i-1)};
+  document.getElementById('notes-btn').onclick=function(){
+    document.body.classList.toggle('show-notes')};
+  addEventListener('keydown',function(e){
+    if(e.key==='ArrowLeft'||e.key===' '||e.key==='PageDown'){show(i+1)}
+    else if(e.key==='ArrowRight'||e.key==='PageUp'){show(i-1)}
+    else if(e.key==='n'||e.key==='N'){document.body.classList.toggle('show-notes')}
+  });
+  var h=parseInt((location.hash||'').replace('#s',''),10);
+  show(isNaN(h)?0:h-1);
+})();
+</script>
+</body>
+</html>
