@@ -556,6 +556,7 @@ h2 .n,h3 .n{color:var(--num);font-weight:700;margin-inline-end:.35rem}
 .cover-advisor{font-size:.98rem;line-height:2;margin-top:.7rem}
 .cover-bottom{font-size:.9rem;color:var(--soft);line-height:2;
  border-top:1px solid var(--line);padding-top:1rem}
+.maintitle,.byline{display:none}
 .byline{text-align:center;margin:0 0 1.8rem}
 .byline p{margin:0;text-align:center}
 .authors{font-size:1.06rem;font-weight:700;line-height:2.1}
@@ -645,9 +646,12 @@ body.final .pdfbar small{display:block;font-weight:400;font-size:.72rem;
 @media print{
  html.final,body.final{background:#fff}
  body.final .sheet{width:auto;max-width:none;margin:0;padding:0;
-  box-shadow:none}
+  box-shadow:none;overflow:hidden}
  body.final .pdfbar{display:none}
- body{max-width:none;margin:0;font-size:11pt;padding:0}
+ body{max-width:none;margin:0;font-size:11pt;padding:0;overflow:hidden}
+ /* تور امن: هیچ عنصری نمی‌تواند پهن‌تر از جعبه‌ی صفحه شود */
+ .sheet *{max-width:100%;min-width:0}
+ p,li,td,th,figcaption,h1,h2,h3{overflow-wrap:break-word}
  a.pn,.hint,.toc{display:none}
  .cover{min-height:auto;height:235mm;page-break-after:always;break-after:page;
   margin:0}
@@ -656,12 +660,16 @@ body.final .pdfbar small{display:block;font-weight:400;font-size:.72rem;
  figure,.eq{page-break-inside:avoid}
  figure img{border:0;padding:0;max-width:100%}
  a{color:inherit;text-decoration:none}
- /* بیرون‌زدگی در خروجی PDF: جدول و رابطه در عرض صفحه مقیاس می‌شوند */
+ /* جدول: چیدمان ثابت = عرض جدول هرگز از صفحه بیشتر نمی‌شود */
  .tblwrap{overflow:visible}
- table{width:100%;font-size:8.5pt;line-height:1.6}
- th,td{padding:.25rem .5rem;white-space:normal}
- .eq{font-size:9pt;overflow:visible}
- mjx-container svg{max-width:100%;height:auto}
+ table{width:100%;table-layout:fixed;font-size:8.5pt;line-height:1.6}
+ th,td{padding:.25rem .5rem;white-space:normal;word-wrap:break-word;
+  overflow-wrap:anywhere}
+ /* رابطه‌ها: کوچک‌سازی + مقیاس SVG؛ اگر باز هم بلند بود بریده می‌شود
+    نه اینکه از صفحه بیرون بزند */
+ .eq{font-size:9pt;overflow:hidden}
+ mjx-container{max-width:100% !important}
+ mjx-container svg{max-width:100% !important;height:auto !important}
  ol.refs li{font-size:8.5pt}
 }
 </style>
@@ -685,7 +693,7 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
   <div class="cover-bottom">پروژه‌ی کارشناسی فیزیک — نیم‌سال ۱۴۰۴–۱۴۰۵<br>
     شهریور ۱۴۰۵</div>
 </div>
-<h1>@@T@@</h1>
+<h1 class="maintitle">@@T@@</h1>
 <div class="byline">
 <p class="authors">امین حسین سدیدی &nbsp;·&nbsp; سید محمد پارسا مولایی طبری</p>
 <p class="affil">دانشجویان کارشناسی فیزیک، گروه فیزیک، دانشگاه اصفهان</p>
