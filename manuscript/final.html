@@ -85,7 +85,7 @@ code{direction:ltr;display:inline-block;font-size:.9em;
  padding:0 .3em}
 @media (max-width:34rem){body{font-size:.98rem;line-height:1.95;
  margin:1.2rem auto}h1{font-size:1.3rem}a.pn{display:none}}
-.authors{text-align:center;font-size:1.08rem;font-weight:700;margin:0 0 .3rem;line-height:2}.affil{text-align:center;font-size:.88rem;color:var(--soft);margin:0 0 1.8rem;line-height:1.9}
+.byline{text-align:center;margin:0 0 2rem}.byline p{margin:0;text-align:center}.authors{font-size:1.1rem;font-weight:700;line-height:2.1}.advisor{font-size:1rem;font-weight:700;margin-top:.9rem !important;line-height:2}.affil{font-size:.86rem;color:var(--soft);line-height:1.8}
 body.final{--maxw:52rem}body.final a.pn,body.final .hint,body.final .toc{display:none}body.final h1{margin-top:1rem}body.final .abs{background:#fff;border:0;border-top:1.6px solid #333;border-bottom:1.6px solid #333;border-radius:0;padding:1rem .2rem}body.final .abs h2{text-align:right;font-size:1rem}body.final figure img{border:0;padding:0}body.final figcaption{text-align:justify}body.final .foot{margin-top:3rem;border-top:1px solid var(--line);padding-top:.6rem;font-size:.82rem;color:var(--soft);text-align:center}
 @page{size:A4;margin:22mm 20mm}
 @media print{body{max-width:none;margin:0;font-size:11pt}.toc{display:none}figure,table{break-inside:avoid}h2{break-after:avoid}
@@ -100,8 +100,12 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],tags:'none',
 <script defer src="vendor/mathjax/tex-svg.js"></script>
 </head><body class="final">
 <h1>بررسی عددی تقویت گسیل خودبه‌خودی و راندمان تابشی گسیل‌گر کوانتومی در مجاورت نانومیله پلاسمونی طلا با روش 3D-FDTD: محدودیت توصیف همسانگرد نرخ گسیل در هندسه‌های ناهمسانگرد</h1>
-<p class="authors">امین حسین سدیدی<sup>۱،*</sup>، سید محمد پارسا مولایی طبری<sup>۱</sup>، مالک باقری هارونی<sup>۱،†</sup></p>
-<p class="affil"><sup>۱</sup> گروه فیزیک، دانشکده‌ی فیزیک، دانشگاه اصفهان، اصفهان، ایران<br><sup>*</sup> نویسنده‌ی مسئول &nbsp;&nbsp; <sup>†</sup> استاد راهنما</p>
+<div class="byline">
+<p class="authors">امین حسین سدیدی &nbsp;·&nbsp; سید محمد پارسا مولایی طبری</p>
+<p class="affil">دانشجویان کارشناسی فیزیک، گروه فیزیک، دانشگاه اصفهان</p>
+<p class="advisor">استاد راهنما: دکتر مالک باقری هارونی</p>
+<p class="affil">عضو هیئت علمی گروه فیزیک، دانشگاه اصفهان</p>
+</div>
 <div class="abs"><h2>چکیده</h2><p>کنترل نرخ گسیل خودبه‌خودی با نانوساختارهای پلاسمونی برای طراحی چشمه‌های تک‌فوتونی و نانوآنتن‌ها اهمیت دارد. در این مقاله، برهم‌کنش یک گسیل‌گر دوقطبی نقطه‌ای با نانومیله‌ی طلای کلاهک‌دار (طول کل \(\nm{60}\)، قطر \(\nm{20}\)) با روش سه‌بعدی تفاضل محدود در حوزه‌ی زمان (3D-FDTD) در یازده اجرای کنترل‌شده بررسی شد. برای دوقطبی طولی در فاصله‌ی \(\nm{5}\) از نوک، قله‌ی فاکتور پورسل \(\Fp = 1.5\times10^{3}\) در \(\nm{610}\) و بیشینه‌ی تقویت توان تابشی \(T = 1.2\times10^{2}\) در \(\nm{616}\) به دست آمد؛ بازده تابشی در قله‌ی پورسل \(7.6\%\) است و بیش از \(90\%\) توان به کانال غیرتابشی می‌رود. چهار کنترل — فضای آزاد، دوقطبی عرضی روی همان نوک، و کره‌ی طلای هم‌حجم با دوقطبی شعاعی و مماسی — نشان دادند که نسبت پاسخ شعاعی به مماسی کره در کل طیف نزدیک \(2.4\) و تقریباً ثابت است، در حالی که نسبت طولی به عرضی نانومیله از همین مقدار در خارج تشدید تا \(41\) در تشدید طولی می‌رسد؛ یعنی ناهمسانگردی نانومیله ماهیتی تشدیدی دارد. پویش گاف (\(3\) تا \(\nm{20}\)) مبادله‌ی تقویت–بازده را کمّی کرد و مقایسه‌ی حالت کره با حل تحلیلی می، کم‌برآوردی \(8\) تا \(14\%\) ارتفاع قله‌ها در مش \(\nm{2}\) را نشان داد. آزمون همگرایی مش (\(3\)، \(2\) و \(\nm{1.5}\)) مکان قله‌ی تابشی را پایدار (\(616\pm\nm{4}\)) ولی ارتفاع قله‌ها را تا \(40\)–\(60\%\) حساس به قرارگیری زیرسلولی چشمه یافت؛ بنابراین نتایج مقاله بر مکان تشدیدها و نسبت‌های میان حالت‌ها استوارند، نه بر رقم دقیق ارتفاع قله.</p></div>
 <p class="kw"><b>کلیدواژه‌ها:</b> نانومیله‌ی طلا، پلاسمون سطحی موضعی (LSPR)، فاکتور پورسل، روش FDTD، خاموشی غیرتابشی (Quenching)، ناهمسانگردی تشدیدی.</p>
 <h2 id="sec:intro"><span class="n">1</span> مقدمه</h2>

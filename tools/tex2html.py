@@ -540,7 +540,7 @@ code{direction:ltr;display:inline-block;font-size:.9em;
  padding:0 .3em}
 @media (max-width:34rem){body{font-size:.98rem;line-height:1.95;
  margin:1.2rem auto}h1{font-size:1.3rem}a.pn{display:none}}
-.authors{text-align:center;font-size:1.08rem;font-weight:700;margin:0 0 .3rem;line-height:2}.affil{text-align:center;font-size:.88rem;color:var(--soft);margin:0 0 1.8rem;line-height:1.9}
+.byline{text-align:center;margin:0 0 2rem}.byline p{margin:0;text-align:center}.authors{font-size:1.1rem;font-weight:700;line-height:2.1}.advisor{font-size:1rem;font-weight:700;margin-top:.9rem !important;line-height:2}.affil{font-size:.86rem;color:var(--soft);line-height:1.8}
 body.final{--maxw:52rem}body.final a.pn,body.final .hint,body.final .toc{display:none}body.final h1{margin-top:1rem}body.final .abs{background:#fff;border:0;border-top:1.6px solid #333;border-bottom:1.6px solid #333;border-radius:0;padding:1rem .2rem}body.final .abs h2{text-align:right;font-size:1rem}body.final figure img{border:0;padding:0}body.final figcaption{text-align:justify}body.final .foot{margin-top:3rem;border-top:1px solid var(--line);padding-top:.6rem;font-size:.82rem;color:var(--soft);text-align:center}
 @page{size:A4;margin:22mm 20mm}
 @media print{body{max-width:none;margin:0;font-size:11pt}.toc{display:none}figure,table{break-inside:avoid}h2{break-after:avoid}
@@ -555,8 +555,12 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
 <script defer src="@@MJ@@"></script>
 </head><body class="@@CLS@@">
 <h1>@@T@@</h1>
-<p class="authors">امین حسین سدیدی<sup>۱،*</sup>، سید محمد پارسا مولایی طبری<sup>۱</sup>، مالک باقری هارونی<sup>۱،†</sup></p>
-<p class="affil"><sup>۱</sup> گروه فیزیک، دانشکده‌ی فیزیک، دانشگاه اصفهان، اصفهان، ایران<br><sup>*</sup> نویسنده‌ی مسئول &nbsp;&nbsp; <sup>†</sup> استاد راهنما</p>
+<div class="byline">
+<p class="authors">امین حسین سدیدی &nbsp;·&nbsp; سید محمد پارسا مولایی طبری</p>
+<p class="affil">دانشجویان کارشناسی فیزیک، گروه فیزیک، دانشگاه اصفهان</p>
+<p class="advisor">استاد راهنما: دکتر مالک باقری هارونی</p>
+<p class="affil">عضو هیئت علمی گروه فیزیک، دانشگاه اصفهان</p>
+</div>
 <div class="hint">
 <b>این یک پیش‌نمایش برای بازبینی است، نه نسخه‌ی نهایی.</b>
 صفحه‌آرایی، شماره‌ی صفحه و شکستِ سطرها در PDF نهایی (XeLaTeX) تعیین
