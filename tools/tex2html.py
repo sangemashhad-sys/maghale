@@ -26,7 +26,7 @@ for _s in (sys.stdout, sys.stderr):
 
 MS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                   'manuscript')
-OUT = os.path.join(MS, 'preview.html')
+OUT = os.path.join(MS, 'final.html' if '--final' in sys.argv else 'preview.html')
 
 # MathJax: اگر نسخه‌ی محلی (tools/vendor_mathjax.py) موجود باشد همان استفاده
 # می‌شود تا پیش‌نمایش بدون اینترنت هم فرمول‌ها را نشان دهد؛ وگرنه CDN.
@@ -540,7 +540,8 @@ code{direction:ltr;display:inline-block;font-size:.9em;
  padding:0 .3em}
 @media (max-width:34rem){body{font-size:.98rem;line-height:1.95;
  margin:1.2rem auto}h1{font-size:1.3rem}a.pn{display:none}}
-.authors{text-align:center;font-size:1.05em;margin:.2em 0 1.2em}.affil{font-size:.85em;color:#444}
+.authors{text-align:center;font-size:1.08rem;font-weight:700;margin:0 0 .3rem;line-height:2}.affil{text-align:center;font-size:.88rem;color:var(--soft);margin:0 0 1.8rem;line-height:1.9}
+body.final{--maxw:52rem}body.final a.pn,body.final .hint,body.final .toc{display:none}body.final h1{margin-top:1rem}body.final .abs{background:#fff;border:0;border-top:1.6px solid #333;border-bottom:1.6px solid #333;border-radius:0;padding:1rem .2rem}body.final .abs h2{text-align:right;font-size:1rem}body.final figure img{border:0;padding:0}body.final figcaption{text-align:justify}body.final .foot{margin-top:3rem;border-top:1px solid var(--line);padding-top:.6rem;font-size:.82rem;color:var(--soft);text-align:center}
 @page{size:A4;margin:22mm 20mm}
 @media print{body{max-width:none;margin:0;font-size:11pt}.toc{display:none}figure,table{break-inside:avoid}h2{break-after:avoid}
  h2,h3{page-break-after:avoid}figure,.eq{page-break-inside:avoid}
@@ -552,9 +553,10 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
  macros:{Fp:'F_p',nm:['#1\\\\,\\\\text{nm}',1]}},options:{enableMenu:false}};
 </script>
 <script defer src="@@MJ@@"></script>
-</head><body>
+</head><body class="@@CLS@@">
 <h1>@@T@@</h1>
-<p class="authors">امین حسین سدیدی<sup>*</sup>، سید محمد پارسا مولایی طبری، مالک باقری هارونی<sup>†</sup><br><span class="affil">گروه فیزیک، دانشکده‌ی فیزیک، دانشگاه اصفهان، اصفهان، ایران</span><br><span class="affil"><sup>*</sup> نویسنده‌ی مسئول &nbsp; <sup>†</sup> استاد راهنما</span></p>
+<p class="authors">امین حسین سدیدی<sup>۱،*</sup>، سید محمد پارسا مولایی طبری<sup>۱</sup>، مالک باقری هارونی<sup>۱،†</sup></p>
+<p class="affil"><sup>۱</sup> گروه فیزیک، دانشکده‌ی فیزیک، دانشگاه اصفهان، اصفهان، ایران<br><sup>*</sup> نویسنده‌ی مسئول &nbsp;&nbsp; <sup>†</sup> استاد راهنما</p>
 <div class="hint">
 <b>این یک پیش‌نمایش برای بازبینی است، نه نسخه‌ی نهایی.</b>
 صفحه‌آرایی، شماره‌ی صفحه و شکستِ سطرها در PDF نهایی (XeLaTeX) تعیین
@@ -570,9 +572,12 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
 @@BODY@@
 <h2 id="refs">مراجع</h2>
 <ol class="refs">@@REFS@@</ol>
+@@FOOT@@
 </body></html>
 """
 
+
+FINAL = '--final' in sys.argv
 
 def main():
     main_tex = read_tex(os.path.join(MS, 'main.tex'))
@@ -630,8 +635,12 @@ def main():
     for k, v in (('@@T@@', inline(title)), ('@@ABS@@', abs_html),
                  ('@@KW@@', kw_html), ('@@TOC@@', toc),
                  ('@@BODY@@', main_html), ('@@REFS@@', '\n'.join(refs)),
-                 ('@@MJ@@', mj)):
+                 ('@@MJ@@', mj), ('@@CLS@@', 'final' if FINAL else ''), ('@@FOOT@@', '<p class="foot">دانشگاه اصفهان — گروه فیزیک — ۱۴۰۵</p>' if FINAL else '')):
         doc = doc.replace(k, v)
+    if FINAL:
+        doc = re.sub(r'<div class="hint">.*?</div>\s*', '', doc, count=1, flags=re.S)
+        doc = re.sub(r'<nav class="toc">.*?</nav>\s*', '', doc, count=1, flags=re.S)
+        doc = re.sub(r'<a class="pn"[^>]*>[^<]*</a>', '', doc)
     doc = unkeep(doc)
 
     # ارجاع‌ها را حالا که همه‌ی برچسب‌ها شناخته شده‌اند جایگزین کن
