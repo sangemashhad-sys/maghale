@@ -515,148 +515,155 @@ PAGE = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>@@T@@</title>
 <style>
-/* قلم وزیرمتن (SIL OFL 1.1)؛ نشانی زیر هنگام ساخت به data: تبدیل می‌شود
-   (inline_fonts) تا خروجی تک‌فایل، حتی در file://، یکسان دیده شود. */
 @font-face{font-family:"Vazirmatn";src:url("fonts/Vazirmatn-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
 @font-face{font-family:"Vazirmatn";src:url("fonts/Vazirmatn-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
-:root{--ink:#1b1e24;--soft:#5c6470;--line:#e4e7ec;--tint:#f5f7fa;
- --accent:#0f4c9a;--accent2:#0a3a75;--num:#8a1c1c;--maxw:46rem;
- --radius:12px;--shadow:0 1px 3px rgba(16,24,40,.06),0 4px 16px rgba(16,24,40,.07)}
+:root{--ink:#16181d;--soft:#5b6472;--line:#e3e6ea;--tint:#f6f8fa;
+ --accent:#0b4fa0;--num:#8a1c1c;--maxw:46rem}
 *{box-sizing:border-box}
 html{overflow-x:clip}
 body{font-family:"Vazirmatn","XB Niloofar","Tahoma",sans-serif;
- font-size:1.03rem;line-height:2.1;max-width:var(--maxw);margin:2.6rem auto;
+ font-size:1.02rem;line-height:2.05;max-width:var(--maxw);margin:2.5rem auto;
  padding:0 1.35rem;padding-inline-start:2.9rem;text-align:justify;
  text-justify:inter-word;color:var(--ink);background:#fff;
  -webkit-font-smoothing:antialiased;overflow-x:clip}
-h1{font-size:1.5rem;line-height:1.9;text-align:center;font-weight:800;
- margin:0 0 .6rem;color:#101318}
-h1::after{content:"";display:block;width:5.5rem;height:3px;border-radius:2px;
- background:linear-gradient(90deg,var(--accent),#6ea8e8);margin:1.1rem auto 0}
-h2{font-size:1.2rem;line-height:1.8;font-weight:800;margin:2.8rem 0 1rem;
- padding-bottom:.45rem;border-bottom:1px solid var(--line);color:#101318}
-h3{font-size:1.05rem;line-height:1.8;font-weight:700;margin:2rem 0 .6rem;
- color:#232830}
-p{margin:0 0 .9rem}
+h1{font-size:1.5rem;line-height:1.9;text-align:center;font-weight:700;
+ margin:0 0 1.2rem}
+h2{font-size:1.2rem;line-height:1.8;font-weight:700;margin:2.6rem 0 .9rem;
+ padding-bottom:.35rem;border-bottom:2px solid var(--line)}
+h3{font-size:1.06rem;line-height:1.8;font-weight:700;margin:1.9rem 0 .6rem;
+ color:#22262e}
+p{margin:0 0 .85rem}
 p[id^="p"]{position:relative}
-a.pn{position:absolute;inset-inline-start:-2.35rem;top:.5rem;font-size:.72rem;
- line-height:1;color:#c3cad4;text-decoration:none;direction:ltr;
+a.pn{position:absolute;inset-inline-start:-2.35rem;top:.45rem;font-size:.72rem;
+ line-height:1;color:#b9c0ca;text-decoration:none;direction:ltr;
  user-select:none;font-family:"Times New Roman",serif}
 a.pn:hover{color:var(--accent)}
 p[id^="p"]:target{background:#fff3b0;border-radius:3px}
-a{color:var(--accent);text-underline-offset:3px}
-h2 .n,h3 .n{color:var(--accent);font-weight:800;margin-inline-end:.4rem}
-.byline{text-align:center;margin:.4rem 0 1.8rem}
+a{color:var(--accent)}
+h2 .n,h3 .n{color:var(--num);font-weight:700;margin-inline-end:.35rem}
+/* --- صفحه‌ی اول (جلد) --- */
+.cover{border:1px solid #222;padding:2.4rem 1.7rem;margin:0 0 2.6rem;
+ text-align:center;display:flex;flex-direction:column;
+ justify-content:space-between;gap:2rem;min-height:34rem}
+.cover-top{font-size:1.05rem;font-weight:700;line-height:2.2;
+ border-bottom:2px solid #222;padding-bottom:1rem}
+.cover-top small{display:block;font-weight:400;font-size:.88rem;
+ color:var(--soft)}
+.cover-title{font-size:1.32rem;font-weight:700;line-height:2.15;margin:auto 0}
+.cover-authors{font-size:1.05rem;line-height:2.2;font-weight:700}
+.cover-authors small{display:block;font-weight:400;font-size:.88rem;
+ color:var(--soft)}
+.cover-advisor{font-size:.98rem;line-height:2;margin-top:.7rem}
+.cover-bottom{font-size:.9rem;color:var(--soft);line-height:2;
+ border-top:1px solid var(--line);padding-top:1rem}
+.byline{text-align:center;margin:0 0 1.8rem}
 .byline p{margin:0;text-align:center}
-.authors{font-size:1.08rem;font-weight:700;line-height:2.1;color:#101318}
+.authors{font-size:1.06rem;font-weight:700;line-height:2.1}
 .advisor{font-size:.98rem;font-weight:700;margin-top:.8rem !important;
- line-height:2;color:var(--accent2)}
-.affil{font-size:.86rem;color:var(--soft);line-height:1.9}
-.abs{background:linear-gradient(180deg,#f8fafc,#f2f6fb);border:1px solid var(--line);
- border-radius:var(--radius);padding:1.2rem 1.4rem;font-size:.98rem;
- line-height:2.05;box-shadow:var(--shadow)}
-.abs h2{border:0;margin:0 0 .7rem;padding:0;font-size:1rem;text-align:center;
- letter-spacing:.02em;color:var(--accent2)}
-.kw{font-size:.9rem;color:var(--soft);line-height:2.1;margin:1rem 0 1.7rem;
+ line-height:2}
+.affil{font-size:.86rem;color:var(--soft);line-height:1.8}
+.abs{background:var(--tint);border:1px solid var(--line);border-radius:4px;
+ padding:1.1rem 1.35rem;font-size:.97rem;line-height:1.95}
+.abs h2{border:0;margin:0 0 .6rem;padding:0;font-size:1.02rem;
+ text-align:center;letter-spacing:.02em}
+.kw{font-size:.92rem;color:var(--soft);line-height:1.9;margin:.9rem 0 1.6rem;
  text-align:center}
 .kw b{color:var(--ink)}
-.kw .chip{display:inline-block;background:#fff;border:1px solid var(--line);
- border-radius:999px;padding:.02rem .75rem;margin:.14rem .1rem;font-size:.83rem;
- color:#333a45}
-.toc{border:1px solid var(--line);border-radius:var(--radius);
- padding:1rem 1.4rem;font-size:.94rem;line-height:2;background:var(--tint)}
-.toc>b{display:block;margin-bottom:.5rem;color:var(--accent2)}
-.toc a{color:#2a3140;text-decoration:none}
-.toc a:hover{color:var(--accent);text-decoration:underline}
-.toc div{margin:.1rem 0}
+.toc{border:1px solid var(--line);border-radius:4px;padding:.9rem 1.35rem;
+ font-size:.94rem;line-height:1.9;background:#fff}
+.toc>b{display:block;margin-bottom:.4rem}
+.toc a{color:var(--accent);text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.toc div{margin:.12rem 0}
 .toc .m>a{font-weight:700}
-.toc .s{padding-inline-start:1.6rem;font-size:.9rem}
-.toc .n{color:var(--accent);display:inline-block;min-width:2.1rem;font-weight:700}
-.eq{margin:1.4rem 0;padding:.45rem .6rem;overflow-x:auto;direction:ltr;
- text-align:center;background:var(--tint);border:1px solid var(--line);
- border-radius:8px;max-width:100%}
+.toc .s{padding-inline-start:1.5rem;font-size:.9rem}
+.toc .n{color:var(--num);display:inline-block;min-width:2.1rem}
+.eq{margin:1.3rem 0;padding:.2rem 0;overflow-x:auto;direction:ltr;
+ text-align:center;max-width:100%}
 mjx-container[display="true"]{max-width:100%;overflow-x:auto}
-figure{margin:2.2rem 0;text-align:center}
+figure{margin:2rem 0;text-align:center}
 figure img{max-width:100%;height:auto;border:1px solid var(--line);
- border-radius:10px;background:#fff;padding:.4rem;box-shadow:var(--shadow)}
+ border-radius:3px;background:#fff;padding:.35rem}
 figure a{display:inline-block;line-height:0}
-figcaption{font-size:.9rem;line-height:1.9;color:var(--soft);margin-top:.8rem;
- text-align:justify}
+figcaption{font-size:.9rem;line-height:1.85;color:var(--soft);
+ margin-top:.7rem;text-align:justify}
 figcaption b{color:var(--ink)}
-figure.tab figcaption{margin:0 0 .7rem;text-align:center}
+figure.tab figcaption{margin:0 0 .6rem;text-align:center}
 .todo{border:1px dashed #c9b98a;background:#fff8e6;color:#7a5b10;
- border-radius:8px;padding:1.4rem 1rem;font-size:.9rem;line-height:1.9}
-.tblwrap{overflow-x:auto;max-width:100%;border:1px solid var(--line);
- border-radius:10px;box-shadow:var(--shadow);margin:1.2rem 0;background:#fff}
-table{border-collapse:collapse;margin:0 auto;font-size:.92rem;line-height:1.8;
- width:auto}
-th,td{padding:.5rem 1.05rem;text-align:right;border-bottom:1px solid var(--line)}
-th{background:var(--accent2);color:#fff;font-weight:700;border-bottom:0;
- white-space:nowrap}
-tbody tr:nth-child(even) td{background:#f7f9fc}
-tr:last-child td{border-bottom:0}
+ border-radius:4px;padding:1.4rem 1rem;font-size:.9rem;line-height:1.9}
+.tblwrap{overflow-x:auto;max-width:100%;margin:1rem 0}
+table{border-collapse:collapse;margin:.5rem auto;font-size:.94rem;
+ line-height:1.75}
+th,td{padding:.45rem 1rem;text-align:right;border-bottom:1px solid var(--line)}
+th{background:none;border-top:1.6px solid #333;border-bottom:1.2px solid #333;
+ font-weight:700}
+tr:last-child td{border-bottom:1.6px solid #333}
 sup a{text-decoration:none;padding:0 .1rem}
-ol.refs{padding-inline-start:1.7rem}
+ol.refs{padding-inline-start:1.6rem}
 ol.refs li{direction:ltr;text-align:left;font-family:"Times New Roman",serif;
- font-size:.9rem;line-height:1.8;margin:.55rem 0;overflow-wrap:anywhere}
-ol.refs li::marker{color:var(--accent);font-weight:700}
+ font-size:.9rem;line-height:1.75;margin:.5rem 0;overflow-wrap:anywhere}
 .hint{border:1px solid var(--line);border-inline-start:4px solid var(--accent);
- background:var(--tint);border-radius:10px;padding:.9rem 1.2rem;font-size:.9rem;
- line-height:1.95;color:var(--soft);margin:0 0 1.8rem}
+ background:var(--tint);border-radius:4px;padding:.85rem 1.1rem;font-size:.9rem;
+ line-height:1.9;color:var(--soft);margin:0 0 1.6rem}
 .hint b{color:var(--ink)}
 .hint code{font-size:.85em}
 :target{background:#fff3b0;border-radius:3px}
 code{direction:ltr;display:inline-block;font-size:.9em;background:var(--tint);
- border:1px solid var(--line);border-radius:4px;padding:0 .3em}
+ border:1px solid var(--line);border-radius:3px;padding:0 .3em}
 .fn{font-size:.85em;color:#555} b.para{color:#7a1f1f}
-@media (max-width:34rem){body{font-size:.98rem;line-height:2;margin:1.2rem auto;
- padding-inline-start:1.1rem}
- h1{font-size:1.28rem}a.pn{display:none}}
-/* نسخه‌ی نهایی ژورنالی: ورق A4 روی پس‌زمینه‌ی خاکستری */
-html.final,body.final{background:#e8ebef;max-width:none !important;
+@media (max-width:34rem){body{font-size:.98rem;line-height:1.95;
+ margin:1.2rem auto;padding-inline-start:1.1rem}h1{font-size:1.3rem}
+ a.pn{display:none}.cover{min-height:0;gap:1.4rem;padding:1.6rem 1rem}}
+/* نسخه‌ی نهایی: ورق A4 */
+html.final,body.final{background:#e6e8eb;max-width:none !important;
  margin:0 !important;padding:0 !important;width:100%}
-body.final .sheet{background:#fff;width:210mm;max-width:calc(100% - 2rem);
- margin:2.2rem auto 4.5rem;padding:22mm 20mm 26mm;border-radius:2px;
- box-shadow:0 3px 24px rgba(16,24,40,.16)}
+body.final .sheet{box-sizing:border-box;background:#fff;width:210mm;
+ max-width:calc(100% - 2rem);margin:2rem auto 4rem;padding:24mm 22mm 28mm;
+ box-shadow:0 2px 18px rgba(0,0,0,.14)}
 body.final .sheet>*{max-width:100%}
 body.final a.pn,body.final .hint,body.final .toc{display:none}
-body.final h1{margin-top:0;font-size:1.4rem;line-height:1.95}
-body.final .abs{background:#fff;box-shadow:none;border:0;
- border-top:2px solid #101318;border-bottom:2px solid #101318;border-radius:0;
- padding:1rem .2rem}
+body.final h1{margin-top:0;font-size:1.42rem;line-height:1.9}
+body.final .abs{background:#fff;border:0;border-top:1.6px solid #333;
+ border-bottom:1.6px solid #333;border-radius:0;padding:1rem .2rem}
 body.final .abs h2{text-align:right;font-size:1rem}
 body.final .kw{text-align:right}
-body.final .kw .chip{background:var(--tint)}
-body.final figure img{border:0;padding:0;box-shadow:none}
-body.final .tblwrap{box-shadow:none}
+body.final figure img{border:0;padding:0}
+body.final figcaption{text-align:justify}
+body.final .cover{margin-bottom:2.2rem}
 body.final .foot{margin-top:3rem;border-top:1px solid var(--line);
- padding-top:.7rem;font-size:.82rem;color:var(--soft);text-align:center}
-body.final .pdfbar{position:fixed;top:16px;left:16px;z-index:9;direction:rtl}
+ padding-top:.6rem;font-size:.82rem;color:var(--soft);text-align:center}
+body.final .pdfbar{position:fixed;top:14px;left:14px;z-index:9;direction:rtl}
 body.final .pdfbar button{font-family:inherit;font-size:.95rem;font-weight:700;
- color:#fff;background:linear-gradient(180deg,var(--accent),var(--accent2));
- border:0;border-radius:10px;padding:.6rem 1.2rem;cursor:pointer;
- box-shadow:0 3px 10px rgba(10,58,117,.35)}
-body.final .pdfbar button:hover{filter:brightness(1.08)}
+ color:#fff;background:var(--accent);border:0;border-radius:6px;
+ padding:.55rem 1.1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+body.final .pdfbar button:hover{background:#083b78}
 body.final .pdfbar small{display:block;font-weight:400;font-size:.72rem;
  opacity:.85}
 @media (max-width:52rem){body.final .sheet{width:100%;max-width:100%;margin:0;
- padding:1.5rem 1.15rem;box-shadow:none;border-radius:0}
- body.final .pdfbar{top:auto;bottom:14px}}
-@page{size:A4;margin:20mm 18mm}
-@media print{html.final,body.final{background:#fff}
- body.final .sheet{width:auto;max-width:none;margin:0;padding:0;box-shadow:none;
- border-radius:0}
+ padding:1.4rem 1.1rem;box-shadow:none}body.final .pdfbar{top:auto;bottom:14px}}
+@page{size:A4;margin:22mm 20mm}
+@media print{
+ html.final,body.final{background:#fff}
+ body.final .sheet{width:auto;max-width:none;margin:0;padding:0;
+  box-shadow:none}
  body.final .pdfbar{display:none}
- body{max-width:none;margin:0;font-size:11pt;background:#fff}
- .toc,.hint{display:none}
+ body{max-width:none;margin:0;font-size:11pt;padding:0}
+ a.pn,.hint,.toc{display:none}
+ .cover{min-height:auto;height:235mm;page-break-after:always;break-after:page;
+  margin:0}
  figure,.tblwrap{break-inside:avoid}
- h2,h3{break-after:avoid;page-break-after:avoid}
+ h2,h3{page-break-after:avoid;break-after:avoid}
  figure,.eq{page-break-inside:avoid}
- figure img{border:0;padding:0;box-shadow:none}
+ figure img{border:0;padding:0;max-width:100%}
  a{color:inherit;text-decoration:none}
- a.pn{display:none}
- .tblwrap{overflow:visible;box-shadow:none;border:0}}
-</style>
+ /* بیرون‌زدگی در خروجی PDF: جدول و رابطه در عرض صفحه مقیاس می‌شوند */
+ .tblwrap{overflow:visible}
+ table{width:100%;font-size:8.5pt;line-height:1.6}
+ th,td{padding:.25rem .5rem;white-space:normal}
+ .eq{font-size:9pt;overflow:visible}
+ mjx-container svg{max-width:100%;height:auto}
+ ol.refs li{font-size:8.5pt}
+}
 </style>
 <script>
 window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
@@ -665,6 +672,19 @@ window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],tags:'none',
 <script defer src="@@MJ@@"></script>
 </head><body class="@@CLS@@">
 @@PDFBAR@@<div class="@@SHEET@@">
+<div class="cover">
+  <div class="cover-top">دانشگاه اصفهان
+    <small>دانشکده‌ی علوم — گروه فیزیک</small></div>
+  <div class="cover-title">@@T@@</div>
+  <div>
+    <div class="cover-authors">امین حسین سدیدی &nbsp;·&nbsp;
+      سید محمد پارسا مولایی طبری
+      <small>دانشجویان کارشناسی فیزیک</small></div>
+    <div class="cover-advisor">استاد راهنما: <b>دکتر مالک باقری هارونی</b></div>
+  </div>
+  <div class="cover-bottom">پروژه‌ی کارشناسی فیزیک — نیم‌سال ۱۴۰۴–۱۴۰۵<br>
+    شهریور ۱۴۰۵</div>
+</div>
 <h1>@@T@@</h1>
 <div class="byline">
 <p class="authors">امین حسین سدیدی &nbsp;·&nbsp; سید محمد پارسا مولایی طبری</p>
@@ -724,10 +744,8 @@ def main():
 
     # ترتیب مهم است: ریاضی، سپس شکل/جدول، سپس عنوان و پاراگراف
     abs_html = body_html(take_math(abstract))
-    # کلیدواژه‌ها به‌صورت نشان‌های (chip) جدا، خوانا و جمع‌وجور
-    kw_parts = [p.strip() for p in take_math(keywords).split('،') if p.strip()]
-    kw_html = ''.join('<span class="chip">%s</span>'
-                      % inline(' '.join(p.split())) for p in kw_parts)
+    # کلیدواژه‌ها به‌صورت خط ساده‌ی رسمی (تم دانشگاهی)
+    kw_html = inline(' '.join(take_math(keywords).split()))
     text = take_floats(take_math('\n\n'.join(src)))
     main_html = body_html(text, number=True)
 
