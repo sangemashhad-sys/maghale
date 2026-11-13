@@ -1,0 +1,8 @@
+meshsym Q_L285_R315_Y160_H5
+meshsym Q_L285_R315_Y160_H4
+meshsym Q_L285_R315_Y160_H3.5_c1
+meshsym Q_L285_R315_Y160_H3.5_c2
+meshsym Q_L285_R315_Y160_H3.5_c3
+meshsym Q_L285_R315_Y160_H3.5_c4
+meshsym Q_L285_R315_Y160_H3.5_c5
+meshsym Q_L285_R315_Y160_H3.5_c6

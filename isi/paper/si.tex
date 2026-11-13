@@ -1,0 +1,454 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{amsmath,amssymb,graphicx,booktabs,siunitx,xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+\newcommand{\Fp}{F_p}
+\newcommand{\TBD}[1]{\textcolor{red}{\textbf{[#1]}}}
+\renewcommand{\thefigure}{S\arabic{figure}}\renewcommand{\thetable}{S\arabic{table}}\renewcommand{\theequation}{S\arabic{equation}}
+\graphicspath{{../figures/}}
+\title{Supplementary Information\\[4pt]\large Resonant versus geometric anisotropy of the Purcell enhancement near a gold nanorod}
+\date{}
+\begin{document}
+\maketitle
+
+\section*{S1. Boundary-element calculations: validation and convergence}
+All boundary-element (BEM) results were obtained with MNPBEM17~[3--5] (retarded solver, curved boundary elements,
+Johnson--Christy gold from the tabulated file distributed with the toolbox) in MATLAB R2026b on GitHub-hosted
+runners. The script \texttt{isi/bem/run\_mnpbem.m} defines all cases; the workflow
+\texttt{.github/workflows/bem-runs.yml} runs one case per job. Table~\ref{tab:bemmie} compares the equal-volume sphere
+with the exact Mie solution evaluated with the same tabulated permittivity (radial dipole: Ruppin~[6]; tangential
+dipole: Kim \emph{et al.}~[7]); Table~\ref{tab:bemconv} and Fig.~\ref{fig:bemconv} give the mesh convergence of the rod.
+
+\begin{table}[h]\centering
+\caption{BEM versus exact Mie theory for the equal-volume gold sphere ($R=\SI{15.874}{nm}$). Median absolute
+relative deviation over \SIrange{500}{900}{nm} (maximum in brackets for the radial $\Fp$).}\label{tab:bemmie}
+\begin{tabular}{llrrrrr}\toprule
+mesh (vertices) & host & gap (nm) & radial $\Fp$ & radial $T$ & tangential $\Fp$ & tangential $T$\\\midrule
+400  & air & 5  & 2.4\% (6.5\%) & 1.8\% & 2.1\% & 1.0\%\\
+784  & air & 5  & 1.0\% (4.4\%) & 1.4\% & 0.7\% & 0.9\%\\
+1444 & air & 5  & 0.9\% (4.2\%) & 1.4\% & 0.7\% & 1.0\%\\
+1444 & air & 10 & 1.5\% (3.8\%) & 1.3\% & 0.5\% & 1.1\%\\
+1444 & air & 20 & 0.9\% (3.3\%) & 1.3\% & 0.1\% & 1.2\%\\
+784  & water & 5  & 0.6\% (4.4\%) & 1.4\% & 0.7\% & 0.8\%\\
+784  & water & 20 & 0.4\% (2.9\%) & 1.3\% & 0.1\% & 1.2\%\\\bottomrule
+\end{tabular}\end{table}
+
+\begin{table}[h]\centering
+\caption{Mesh convergence of the rod (axial dipole). $h$: target element size. For $h=\SI{1}{nm}$ the gaps of 5, 10 and \SI{20}{nm} cover \SIrange{500}{900}{nm} (four wavelength chunks run in parallel); $^a$\SIrange{500}{808}{nm} only (six-hour limit of a single CI job).}\label{tab:bemconv}
+\begin{tabular}{rrrrrr}\toprule
+$h$ (nm) & elements & gap (nm) & $\Fp^{\max}$ ($\lambda$) & $T_{\max}$ ($\lambda$) & $\eta_a(\lambda_T)$\\\midrule
+3   & 720  & 5 & 1649 (604) & 117.7 (608) & 7.3\%\\
+2   & 1550 & 5 & 1643 (604) & 117.0 (608) & 7.3\%\\
+1.5 & 2829 & 5 & 1638 (604) & 116.5 (608) & 7.3\%\\
+1 & 6324 & 5 & 1634 (604) & 116.2 (608) & 7.3\%\\
+3   & 720  & 3 & 3672 (508) & 209.8 (608) & 6.5\%\\
+1.5 & 2829 & 3 & 3782 (508) & 214.1 (608) & 6.6\%\\
+1$^a$ & 6324 & 3 & 3770 (508) & 213.1 (608) & 6.6\%\\
+1.5 & 2829 & 10 & 453 (604) & 36.2 (612) & 8.9\%\\
+1 & 6324 & 10 & 453 (604) & 36.2 (612) & 8.9\%\\
+1.5 & 2829 & 20 & 78 (604) & 8.2 (612) & 11.6\%\\
+1 & 6324 & 20 & 78 (604) & 8.2 (612) & 11.6\%\\\bottomrule
+\end{tabular}\end{table}
+
+\begin{figure}[h]\centering\includegraphics[width=\linewidth]{fig_bem_convergence.pdf}
+\caption{Mesh convergence of the BEM for the rod with axial dipole at a \SI{5}{nm} gap.}\label{fig:bemconv}\end{figure}
+
+\section*{S2. Plasmon-eigenmode decomposition, excitation and additional set-ups}
+\emph{Eigenmodes.} The 40 lowest eigenvalues of the quasistatic BEM matrix $F$ were computed with
+\texttt{bemstateig} of MNPBEM17 on the \SI{2}{nm} meshes (sphere: 784 vertices). The longitudinal (transverse)
+dipolar mode is the eigenvector $u_k$ with the largest oscillator strength $s_k=(\textstyle\sum_j a_j\mathbf r_j u_{k,j})\cdot(\tilde u_k\cdot\mathbf n)$
+for a uniform field along $z$ ($x$), where $a_j$, $\mathbf r_j$ and $\mathbf n_j$ are the area, centroid and normal
+of element $j$; its contribution to $\Fp-1$ follows from Eq.~(3) of the main text and is evaluated with the same
+decay-rate routine as the full solution. The trivial eigenvalue $-2\pi$ (uniform charge) does not couple. Script:
+\texttt{isi/bem/extra/job\_modes.m}. Table~\ref{tab:modes} lists the decomposition at the resonance of the
+longitudinal mode.
+
+\begin{table}[h]\centering
+\caption{Quasistatic decomposition of the axial $\Fp$ at the resonance of the longitudinal dipolar mode
+($\lambda_L$). Share: fraction of $\Fp-1$ carried by that mode; background: $\Fp-1$ minus that contribution, plus
+one; geometric ratio: background divided by the transverse $\Fp$; total ratio: axial over transverse $\Fp$.}\label{tab:modes}
+\begin{tabular}{lrrrrrrr}\toprule
+particle & $\lambda_L$ (nm) & gap (nm) & axial $\Fp$ & share & background & geometric ratio & total ratio\\\midrule
+rod AR 2 & 540 & 5  & 859  & 57\% & 368 & 2.7 & 6\\
+         &     & 10 & 154  & 80\% & 32  & 2.6 & 13\\
+rod AR 3 & 595 & 3  & 2936 & 80\% & 593 & 2.7 & 13\\
+         &     & 5  & 1374 & 91\% & 129 & 3.1 & 33\\
+         &     & 10 & 352  & 96\% & 14  & 3.3 & 82\\
+         &     & 20 & 55   & 98\% & 1.9 & 1.6 & 47\\
+rod AR 4 & 655 & 5  & 3095 & 98\% & 57  & 3.4 & 185\\
+         &     & 10 & 861  & 99\% & 7.5 & 3.3 & 382\\
+rod AR 5 & 725 & 5  & 4661 & 99\% & 46  & 3.7 & 374\\
+         &     & 10 & 1322 & 100\% & 6.8 & 3.6 & 693\\
+sphere   & 510 & 5  & 761  & 9\%  & 693 & 2.4 & 3\\
+         &     & 10 & 89   & 21\% & 70  & 2.4 & 3\\\bottomrule
+\end{tabular}\end{table}
+
+\emph{Retarded pole fits.} The full BEM spectra $\Fp(\omega)-1$ of the axial dipole were fitted over the window
+given below with $\mathrm{Im}[C/(\tilde\omega-\omega)]+a_0+a_1(\omega-\omega_0)+a_2(\omega-\omega_0)^2$ ($C$,
+$\tilde\omega$ complex; relative residuals), the quasinormal-mode form of a single modal contribution plus a smooth
+background. The method was first applied to the quasistatic spectra, for which the dipolar-mode term is known
+exactly (Table~\ref{tab:modes}). Script: \texttt{isi/analysis/pole\_fit.py}.
+
+\begin{table}[h]\centering
+\caption{Share of $\Fp-1$ carried by the longitudinal dipolar mode at its resonance from pole fits. Quasistatic:
+exact value / fitted value. Retarded: fitted value, pole wavelength and full linewidth.}\label{tab:pole}
+\begin{tabular}{lrrrrr}\toprule
+aspect ratio & gap (nm) & quasistatic exact / fit & retarded fit & $\lambda$ (nm) & width (meV)\\\midrule
+2 & 5  & 57\% / --$^a$ & --$^a$ & 545 & -- \\
+2.5 & 5 & -- & 74\% & 582 & 237\\
+3 & 3  & 80\% / 59\% & 73\% & 614 & 145\\
+3 & 5  & 91\% / 78\% & 88\% & 610 & 133\\
+3 & 10 & 96\% / 89\% & 94\% & 608 & 132\\
+3 & 20 & 98\% / 94\% & 96\% & 607 & 133\\
+4 & 5  & 98\% / 97\% & 97\% & 676 & 86\\
+4 & 10 & 99\% / 98\% & 97\% & 676 & 89\\
+5 & 5  & 99\% / 98\% & 100\% & 756 & 85\\
+5 & 10 & 100\% / 99\% & 101\% & 756 & 85\\\bottomrule
+\end{tabular}
+
+\smallskip
+{\footnotesize $^a$The resonance lies at the interband edge; the fit cannot separate mode and background (fitted share
+$>$\SI{100}{\percent}).}
+\end{table}
+
+\emph{Shape of the rod ends.} The caps of the $L=\SI{60}{nm}$, $D=\SI{20}{nm}$ rod were replaced by half-spheroids
+with axial semi-axis $c=rR$ by an affine map of the hemispherical cap vertices and curved-element midpoints (same
+total length; \texttt{bemx\_tiprod.m}, \texttt{job\_tips.m}). Retarded BEM and quasistatic decomposition as above.
+
+\begin{table}[h]\centering
+\caption{Effect of the end-cap shape (axial dipole on the axis). $\lambda_T$, $T_{\max}$, $\eta_a$: radiative peak;
+background ratio and mode share: quasistatic decomposition at the resonance of the dipolar mode.}\label{tab:tips}
+\begin{tabular}{rrrrrrr}\toprule
+$r=c/R$ & gap (nm) & $\lambda_T$ (nm) & $T_{\max}$ & $\eta_a$ & max $\Fp^{\parallel}/\Fp^{\perp}$ & background ratio\\\midrule
+1    & 5  & 610 & 117.5 & 7.6\% & 49  & 3.1\\
+1    & 10 & 610 & 36.3  & 8.5\% & 135 & 3.3\\
+0.75 & 5  & 615 & 128.9 & 8.2\% & 47  & 2.6\\
+0.75 & 10 & 615 & 42.5  & 9.0\% & 135 & 2.6\\
+0.5  & 5  & 620 & 144.6 & 8.8\% & 45  & 2.1\\
+0.5  & 10 & 620 & 51.9  & 9.4\% & 135 & 2.0\\
+0.35 & 5  & 625 & 157.1 & 9.5\% & 43  & 1.8\\
+0.35 & 10 & 625 & 60.6  & 10.1\% & 133 & 1.7\\\bottomrule
+\end{tabular}\end{table}
+
+\begin{figure}[h]\centering\includegraphics[width=0.5\linewidth]{fig_excitation.pdf}
+\caption{Local intensity enhancement $|E_z|^2/|E_0|^2$ on the axis, 5 and \SI{10}{nm} beyond the apex, for a plane
+wave polarised along the axis (BEM): rod and equal-volume sphere.}\label{fig:exc}\end{figure}
+
+\begin{figure}[h]\centering\includegraphics[width=\linewidth]{fig_mie.pdf}
+\caption{Validation of the BEM against the exact Mie solution for the equal-volume sphere at a \SI{5}{nm} gap:
+(a) $\Fp$ and (b) $T$ for the radial (solid) and tangential (dashed) dipole and three surface meshes; thick grey
+curves: exact results.}\label{fig:miesi}\end{figure}
+
+\begin{figure}[h]\centering\includegraphics[width=0.75\linewidth]{fig_offset.pdf}
+\caption{Emitter on a spacer shell of thickness $s$ around the rod tip at polar angle $\theta$, dipole normal to the
+surface: (a) radiative enhancement relative to the on-axis value, (b) antenna efficiency at the radiative peak
+(\SI{610}{nm}). Script: \texttt{job\_offset.m}.}\label{fig:offsetsi}\end{figure}
+
+\emph{Substrate.} The rod (axis along $x$) lies \SI{1}{nm} above a glass half-space ($\varepsilon=1.52^2$); the
+reflected Green function is tabulated with \texttt{compgreentablayer} at 23 wavelengths between 480 and \SI{920}{nm}
+and interpolated. Rates are given in units of the vacuum rate; the reference is the same dipole above bare glass
+(\texttt{decayrate0}). Script: \texttt{job\_substrate.m}.
+
+\emph{Collection on glass by reciprocity.} The angular emission of the dipole next to the rod on glass was obtained
+from $\mathrm{d}P/\mathrm{d}\Omega=n_j\sum_{\rm pol}|\mathbf p\cdot\mathbf E_{\rm loc}(\hat{\mathbf s},{\rm pol})|^2$,
+where $\mathbf E_{\rm loc}$ is the field at the dipole for a unit-amplitude plane wave incident from direction
+$\hat{\mathbf s}$ in medium $j$ (air or glass), computed with the layer BEM for $24\times36$ directions per half-space
+and two polarisations (3456 right-hand sides of one BEM solution; \texttt{job\_recip.m}). A free dipole gives
+$8\pi/3$, which fixes the absolute normalisation. The formula was verified against an independent angular-spectrum
+(Fresnel) calculation for a bare dipole above glass (\texttt{isi/analysis/glass\_check.py}). The far field returned
+directly by the layer routines of MNPBEM17 was not used: the induced-charge and dipole contributions are returned on
+differently ordered direction sets, so that their sum, and quantities derived from it, are inconsistent for weakly
+radiating dipoles. Table~\ref{tab:recip} lists the checks and results.
+
+\begin{table}[h]\centering
+\caption{Emission of the dipole next to the rod on glass ($n=1.52$, dipole height \SI{10.97}{nm}, \SI{640}{nm}) by
+reciprocity. Radiative rate in units of the vacuum rate; for the lossless rod ($\varepsilon=4$) it must equal the total
+decay rate obtained from the near field. Fractions of the radiated power.}\label{tab:recip}
+\begin{tabular}{lrrrrrr}\toprule
+case & gap & radiative rate & total rate & into glass & oil NA 1.45 & dry NA 0.9 (top)\\\midrule
+bare dipole $x$, analytic & -- & 1.299 & 1.299 & 82.7\% & 79.2\% & 14.7\%\\
+bare dipole $x$, BEM reciprocity & -- & 1.298 & -- & 82.6\% & 78.5\%$^a$ & 14.6\%\\
+dielectric rod, $x$ & 5 & 2.785 & 2.882 & 82.7\% & 78.5\%$^a$ & 14.6\%\\
+dielectric rod, $y$ & 5 & 0.938 & 0.934 & 82.7\% & 78.5\%$^a$ & 14.6\%\\
+dielectric rod, $z$ & 5 & 1.516 & 1.421 & 84.9\% & 81.5\%$^a$ & 9.8\%\\
+gold rod, $x$ & 5 & 271.6 & 1960 & 82.7\% & 78.5\%$^a$ & 14.6\%\\
+gold rod, $x$ & 20 & 14.5 & 78.8 & 82.6\% & 78.4\%$^a$ & 14.7\%\\\bottomrule
+\end{tabular}
+
+\smallskip
+{\footnotesize $^a$The direction grid places the cone edge between quadrature points, which biases the NA-limited
+fractions by up to 2 percentage points; the main text quotes the analytic bare-dipole fractions, which the rod
+reproduces for the total fraction into the glass to $<0.2$ points.}
+\end{table}
+
+\emph{Nonlocal response.} Following Luo \emph{et al.}~[8] the metal is shrunk by $\Delta d=\SI{0.05}{nm}$ and
+covered by a layer of the same thickness with permittivity
+$\varepsilon_t=\varepsilon_m\varepsilon_b q_L\Delta d/(\varepsilon_m-\varepsilon_b)$,
+$q_L=\sqrt{\omega_p^2/\varepsilon_\infty-\omega(\omega+i\gamma)}/\beta$, with the tabulated Johnson--Christy
+$\varepsilon_m$, $\hbar\omega_p=\SI{9.02}{eV}$, $\varepsilon_\infty=9.84$, $\hbar\gamma=\SI{0.071}{eV}$ and
+$\beta=\sqrt{3/5}\,v_F$, $v_F=\SI{1.40e6}{m/s}$; integration over neighbouring elements of the two surfaces uses
+polar refinement (\texttt{npol}~=~20). The local reference uses the same mesh. Script: \texttt{job\_nonlocal.m}.
+
+\section*{S3. Drude--Lorentz representation of Johnson--Christy gold}
+For the time-domain body-of-revolution solver the Johnson--Christy permittivity~[1] is represented as
+\begin{equation}
+\varepsilon(f)=\varepsilon_\infty-\frac{\sigma_0 f_0^2}{f^2+i f\gamma_0}
++\sum_{j=1}^{2}\frac{\sigma_j f_j^2}{f_j^2-f^2-i f\gamma_j},
+\end{equation}
+with $f=1/\lambda$ in \si{\micro\metre^{-1}} (Meep convention, $e^{-i\omega t}$). A least-squares fit over
+\SIrange{440}{1000}{nm}, weighted by $|\varepsilon|^{-1/2}$, gives the parameters of Table~\ref{tab:fit}; the
+root-mean-square relative error is \SI{1.6}{\percent} and the maximum \SI{3.4}{\percent}. The same model is used in
+the Mie reference calculations, so that benchmark differences reflect discretisation only.
+
+\begin{table}[h]\centering\caption{Fit parameters ($hc f$ gives energies in eV with $hc=\SI{1.2398}{eV\,\micro m}$).}\label{tab:fit}
+\begin{tabular}{lcccc}\toprule
+term & $f_j$ (\si{\micro\metre^{-1}}) & $hc f_j$ (eV) & $\gamma_j$ (\si{\micro\metre^{-1}}) & $\sigma_j$\\\midrule
+$\varepsilon_\infty$ & \multicolumn{4}{c}{2.229}\\
+Drude & 8.276 & 10.26 & 0.0490 & 0.701\\
+Lorentz 1 & 2.208 & 2.737 & 0.509 & 1.156\\
+Lorentz 2 & 2.755 & 3.416 & 0.010 & 2.101\\\bottomrule
+\end{tabular}\end{table}
+
+\section*{S4. Three-dimensional FDTD set-up}
+Lumerical FDTD 2024~R1, cubic domain of side \SI{600}{nm} with 12 PML layers, maximum simulation time
+\SI{300}{fs}, auto-shutoff $10^{-5}$ (reached after \SIrange{19}{28}{fs} for cases B, C, D and
+\SIrange{52}{80}{fs} for the axial rod cases). A uniform override mesh ($\Delta=\SI{2}{nm}$ unless stated) covers
+the particle, gap and source; global mesh accuracy 3. Radiated power is the flux through six planar monitors on a
+\SI{400}{nm} cube; 201 wavelengths between 500 and \SI{900}{nm}. The dipole sits at $z=\SI{35}{nm}$, between two
+nodes of the \SI{2}{nm} mesh, whereas in the free-space reference (case B) it sits at $z=0$ on a node. The
+script that builds and runs all cases from scratch is provided with the data.
+
+\begin{table}[h]\centering
+\caption{All three-dimensional FDTD cases (raw definitions). $\eta_{F_p}$, $\eta_T$: efficiency at the Purcell and
+radiative peaks; $\eta_{\max}$: spectral maximum.}
+\begin{tabular}{lrrrrrrr}\toprule
+case & $\lambda_{F_p}$ & $F_p^{\max}$ & $\lambda_T$ & $T_{\max}$ & $\eta_{F_p}$ & $\eta_T$ & $\eta_{\max}$\\\midrule
+A rod, axial, 5 nm & 610 & 1496 & 616 & 119 & 7.6\% & 8.6\% & 19\%\\
+C rod, transverse & 508 & 239 & 500 & 0.48 & 0.18\% & 0.21\% & 5.7\%\\
+D sphere, radial & 508 & 659 & 532 & 6.03 & 0.76\% & 1.1\% & 12\%\\
+D$_\perp$ sphere, tangential & 510 & 268 & 500 & 0.45 & 0.15\% & 0.18\% & 1.9\%\\
+D Mie (exact) & 506 & 772 & 530 & 6.58 & 0.67\% & -- & 11\%\\
+G3 gap 3 nm, 1-nm mesh & 516 & 7198 & 614 & 252 & 0.05\% & 6.4\% & 7.7\%\\
+G10 gap 10 nm & 610 & 553 & 614 & 46.8 & 8.1\% & 8.9\% & 31\%\\
+G20 gap 20 nm & 610 & 91 & 618 & 9.9 & 9.6\% & 12\% & 74\%\\
+M3 mesh 3 nm & 644 & 2027 & 648 & 184 & 8.7\% & 9.3\% & 18\%\\
+M1.5 mesh 1.5 nm & 540 & 3752 & 620 & 165 & 0.05\% & 7.0\% & 9.6\%\\\bottomrule
+\end{tabular}\end{table}
+
+\section*{S5. Free-space reference and mesh sensitivity of the three-dimensional solver}
+Figure~\ref{fig:fs} shows the free-space check: $T_B$ stays within $[0.993,1.003]$ while $F_{p,B}$ oscillates
+between 0.93 and 1.13, which yields the unphysical $\eta_B=1.08$ at \SI{748}{nm} and bounds the normalisation
+uncertainty of $F_p$ at $\pm\SI{13}{\percent}$ (\SI{3}{\percent} at \SI{610}{nm}). Figure~\ref{fig:mesh} shows
+the mesh sensitivity of case A: the radiative peak position (\SI{616\pm4}{nm}) and the efficiency at it are stable,
+whereas the peak heights depend on the sub-cell position of the source. Ratios between cases computed with the
+same mesh and source position are unaffected.
+
+\begin{figure}[h]\centering\includegraphics[width=0.48\linewidth]{fig_freespace.pdf}
+\caption{Free-space reference B of the three-dimensional solver.}\label{fig:fs}\end{figure}
+\begin{figure}[h]\centering\includegraphics[width=\linewidth]{fig_mesh_lumerical.pdf}
+\caption{Mesh sensitivity of case A in the three-dimensional solver: (a) $F_p$, (b) $T$, (c) $\eta_a$ for override
+meshes of 3, 2 and 1.5~nm.}\label{fig:mesh}\end{figure}
+
+\section*{S6. Body-of-revolution solver: method and benchmarks}
+Cylindrical-coordinate FDTD (Meep~[2]) with field dependence $e^{im\varphi}$; axial dipole: $E_z$ source, $m=0$;
+transverse dipole: $E_r$ source, $m=1$. $T$ is the ratio of the fluxes through a closed surface (top and bottom discs and a cylindrical side wall) around
+the particle with and without it. $F_p=(P_{\rm rad}+P_{\rm abs})/P_0$, where $P_{\rm abs}$ is the net inflow through a
+second closed surface that encloses only the particle, its top disc lying at mid-gap. The local density of states
+at the source cell gives the same order of magnitude but is spiky near the metal and is used only as a cross-check. The band
+\SIrange{490}{900}{nm} is assembled from three runs with pulses covering \SIrange{460}{610}{}, \SIrange{540}{760}{}
+and \SIrange{630}{990}{nm}, of which only \SIrange{490}{570}{}, \SIrange{570}{700}{} and \SIrange{700}{900}{nm} are
+kept: a broadband single run produced errors up to \SI{37}{\percent} at the band edges, where the source spectrum
+is weak. Run time 30~\si{\micro\metre}/$c$ after the source (identical $F_p$ to 60); PML thickness
+\SI{0.15}{\micro\metre}, with a \SI{0.3}{\micro\metre} check at the finest grid. To avoid long-lived numerical ringing,
+the Lorentz-pole damping in the gold fit is bounded below by \SI{0.2}{\micro\metre^{-1}} (same fit accuracy).
+
+Benchmark against the exact Mie solution for a dielectric sphere ($\varepsilon=4$, $R=\SI{15.874}{nm}$, radial dipole
+at \SI{5}{nm}): a grid of \SI{2}{nm} reproduces $F_p$ within \SI{1}{\percent} in the band centres; a \SI{4}{nm} grid
+gives a uniform \SIrange{4}{5}{\percent} overestimate with a maximum deviation of \SI{12}{\percent}. For gold (radial dipole, \SI{5}{nm} gap) at a \SI{2}{nm} grid, $T$ deviates from Mie by about
+\SI{10}{\percent} while the power-balance $F_p$ is about three times too large; at a \SI{20}{nm} gap the $F_p$
+error drops to \SI{24}{\percent} and $T$ agrees within \SI{5}{\percent}. The $F_p$ error is therefore a near-field
+discretisation error of the staircased metal surface. Grids of 2, 1.33 and \SI{1}{nm} with linear extrapolation to
+zero spacing are summarised in Table~\ref{tab:bor}.
+
+\begin{table}[h]\centering
+\caption{Body-of-revolution solver against exact Mie theory (gold sphere, radial dipole, \SI{5}{nm} gap) and grid
+convergence of the nanorod (axial dipole, \SI{5}{nm} gap). Errors are medians over \SIrange{490}{900}{nm}.}\label{tab:bor}
+\begin{tabular}{lcccc}\toprule
+grid (nm) & sphere: $|\Delta F_p|$ & sphere: $|\Delta T|$ & rod: $T_{\max}$ ($\lambda_T$) & rod: NA 0.9 fraction\\\midrule
+2.00 & 215\% & 10.2\% & 149 (631 nm) & 0.181\\
+1.33 & 108\% & 8.4\% & 134 (617 nm) & 0.181\\
+1.00 & 93\% & 7.2\% & 125 (611 nm) & 0.180\\
+extrapolated & 48\% & 4.4\% & -- & --\\\bottomrule
+\end{tabular}\end{table}
+
+PML thickness 0.15 versus \SI{0.3}{\micro\metre} at the \SI{1}{nm} grid changes $T$ by \SI{0.1}{\percent} (median)
+but $F_p$ by \SI{9}{\percent}. The radiative quantities are therefore converged to the level quoted in the main text,
+whereas $F_p$ in a \SI{5}{nm} gap is not converged at grids of \SI{1}{nm} with a staircased surface and is not used; all $F_p$ values in the main text are BEM results.
+The transverse ($m=\pm1$) configuration with a single $E_r$ source on the axis gave unphysical (negative) total
+rates and is likewise not used; all transverse results in the main text are BEM results. All runs were
+executed on GitHub-hosted runners (workflow \texttt{.github/workflows/meep-runs.yml}); raw outputs are in
+\texttt{isi/results/ci}.
+
+\section*{S7. Semi-analytic spheroid solution and closed-form single-mode model}
+\emph{Multipole solution.} For a prolate spheroid with semi-axes $a>b$ (focal distance $f=\sqrt{a^2-b^2}$, surface
+$\xi=\xi_0=a/f$ in prolate spheroidal coordinates $\xi,\eta,\varphi$) and a dipole on the axis at $z_0>a$, the potential
+inside is $\sum_n A_nP_n^m(\xi)P_n^m(\eta)\cos m\varphi$ and the induced potential outside
+$\sum_n B_nQ_n^m(\xi)P_n^m(\eta)\cos m\varphi$, with $m=0$ for the axial and $m=1$ for the transverse dipole~[9]. The
+incident coefficients $s_n=c_nP_n^m(\xi_0)$ are obtained by projecting the dipole potential on the surface onto
+$P_n^m(\eta)$ (1500-point Gauss--Legendre quadrature); continuity of the potential and of $\varepsilon\,\partial_\xi\phi$
+gives
+\begin{equation}
+B_nQ_n^m(\xi_0)=\frac{(\varepsilon-\varepsilon_b)\,P_n'/P_n}{\varepsilon_b\,Q_n'/Q_n-\varepsilon\,P_n'/P_n}\,s_n ,
+\end{equation}
+where the logarithmic derivatives are evaluated at $\xi_0$ (type-3 Legendre functions, 30-digit arithmetic), so that
+only ratios of Legendre functions enter. The induced field at the dipole follows by differentiating the series
+($n\leq50$; converged to $<10^{-6}$ at a \SI{5}{nm} gap), $\Fp=1+\tfrac{3}{2k^3}\mathrm{Im}\,(\hat{\mathbf n}\cdot\mathbf E_{\rm ind})$
+and $T=|1+p_{\rm ind}|^2$, where $p_{\rm ind}$ is the dipole moment of the $n=1$ term. For the $n=1$ terms the
+radiation reaction $i\tfrac23k^3p_{\rm ind}$ and the dynamic depolarisation $k^2p_{\rm ind}/a$ act as a uniform
+field on the particle and are included self-consistently. The code is \texttt{isi/analysis/spheroid\_qs.py}.
+
+\emph{Closed form.} Keeping the $n=1$, $m=0$ term only, the field of the dipolar mode on the axis per unit dipole
+moment is $E_1(z_0)=-(3/f^3)\,Q_1'(\xi)$ with $Q_1(\xi)=\tfrac{\xi}{2}\ln\frac{\xi+1}{\xi-1}-1$, which gives
+Eq.~(5) of the main text; by reciprocity the same factor describes the excitation of the mode by the emitter. The
+polarisability of the mode at its resonance is approximated by the peak of the quasistatic Lorentzian with
+$1/L_z=1-\varepsilon'$, combined with radiation damping. For a rod, the spheroid with the same half-length and apex
+radius of curvature ($b^2/a=D/2$) is used for $E_1$, and the actual rod volume for $\alpha_L$. All 30 configurations
+are listed in Table~\ref{tab:law}.
+
+\begin{table}[h]\centering\small
+\caption{Closed-form single-mode model (Eqs.~4--5 of the main text) versus BEM for the axial dipole at the radiative
+peak $\lambda_L$. Ratio: BEM/model.}\label{tab:law}
+\begin{tabular}{lrrrrrrrr}\toprule
+case & gap (nm) & $\lambda_L$ (nm) & $\Fp$ BEM & $\Fp$ model & ratio & $T$ BEM & $T$ model & ratio\\\midrule
+AR 2 & 5 & 560 & 719 & 1038 & 0.69 & 18.3 & 34.0 & 0.54\\
+AR 2 & 10 & 565 & 131 & 293 & 0.45 & 6.6 & 13.6 & 0.49\\
+AR 2 & 20 & 570 & 17 & 46 & 0.36 & 2.4 & 4.5 & 0.54\\
+AR 2.5 & 5 & 585 & 979 & 1311 & 0.75 & 47.0 & 76.3 & 0.62\\
+AR 2.5 & 10 & 585 & 246 & 346 & 0.71 & 15.3 & 24.8 & 0.62\\
+AR 2.5 & 20 & 590 & 34 & 60 & 0.57 & 4.2 & 7.4 & 0.57\\
+AR 3 & 5 & 608 & 1603 & 1499 & 1.07 & 117.0 & 137.0 & 0.85\\
+AR 3 & 10 & 612 & 406 & 458 & 0.89 & 36.2 & 49.9 & 0.73\\
+AR 3 & 20 & 612 & 71 & 76 & 0.94 & 8.3 & 12.0 & 0.69\\
+AR 4 & 5 & 680 & 3454 & 2838 & 1.22 & 638.2 & 614.2 & 1.04\\
+AR 4 & 10 & 680 & 1039 & 861 & 1.21 & 196.0 & 198.8 & 0.99\\
+AR 4 & 20 & 680 & 197 & 162 & 1.22 & 39.2 & 44.6 & 0.88\\
+AR 5 & 5 & 760 & 4477 & 3117 & 1.44 & 1006.5 & 824.3 & 1.22\\
+AR 5 & 10 & 760 & 1389 & 997 & 1.39 & 315.4 & 278.0 & 1.13\\
+AR 5 & 20 & 760 & 277 & 204 & 1.36 & 64.5 & 65.4 & 0.99\\
+D 15 & 5 & 605 & 2073 & 2172 & 0.95 & 68.7 & 88.3 & 0.78\\
+D 15 & 10 & 605 & 462 & 493 & 0.94 & 18.0 & 25.0 & 0.72\\
+D 15 & 20 & 610 & 55 & 73 & 0.75 & 4.2 & 6.7 & 0.63\\
+D 25 & 5 & 615 & 1233 & 1130 & 1.09 & 172.1 & 197.3 & 0.87\\
+D 25 & 10 & 615 & 400 & 369 & 1.08 & 60.8 & 71.5 & 0.85\\
+D 25 & 20 & 620 & 75 & 81 & 0.93 & 14.8 & 21.0 & 0.70\\
+D 30 & 5 & 625 & 957 & 896 & 1.07 & 227.2 & 263.6 & 0.86\\
+D 30 & 10 & 625 & 351 & 329 & 1.06 & 90.1 & 104.9 & 0.86\\
+D 30 & 20 & 625 & 86 & 75 & 1.15 & 24.1 & 29.2 & 0.83\\
+Ag & 5 & 505 & 2974 & 2600 & 1.14 & 1131.0 & 1116.0 & 1.01\\
+Ag & 10 & 505 & 866 & 728 & 1.19 & 331.8 & 329.4 & 1.01\\
+Ag & 20 & 505 & 155 & 121 & 1.29 & 61.0 & 63.6 & 0.96\\
+spheroid & 5 & 600 & 1984 & 2306 & 0.86 & 105.5 & 144.7 & 0.73\\
+spheroid & 10 & 600 & 386 & 449 & 0.86 & 24.5 & 34.4 & 0.71\\
+spheroid & 20 & 605 & 47 & 65 & 0.73 & 5.3 & 8.4 & 0.63\\
+\bottomrule\end{tabular}\end{table}
+
+\section*{S8. Sensitivity to the gold permittivity and cryogenic estimate}
+Same rod and BEM settings as in the main text ($h=\SI{2}{nm}$, \SIrange{500}{840}{nm} in steps of \SI{4}{nm}).
+Palik: table distributed with MNPBEM; Olmon (evaporated film) and McPeak: refractiveindex.info database (CC0), resampled
+on 0.6--\SI{4.0}{eV}. Surface damping and cryogenic estimates modify only the Drude term of the Drude--Lorentz fit of
+Section~S3 ($\hbar\omega_p^{\rm eff}=\SI{8.59}{eV}$, $\hbar\gamma=\SI{0.061}{eV}$):
+$\varepsilon=\varepsilon_{\rm JC}-\omega_p^2/(\omega^2+i\gamma'\omega)+\omega_p^2/(\omega^2+i\gamma\omega)$ with
+$\hbar\gamma'=\SI{0.078}{eV}$ (surface damping), \SI{0.039}{eV} (phonon contribution, \SI{0.022}{eV} from the
+dc resistivity of gold, removed) and \SI{0.020}{eV} (lower bound). The interband part is kept at its room-temperature
+value. Tables: \texttt{isi/bem/extra/gold\_*.dat}, script \texttt{isi/analysis/make\_gold\_tables.py}.
+
+\begin{table}[h]\centering\small
+\caption{Rod $60\times\SI{20}{nm}$, axial dipole: radiative peak, $\Fp$ there, antenna efficiency and maximum
+anisotropy $\Fp^{\parallel}/\Fp^{\perp}$ (wavelength in brackets) for different permittivity data.}\label{tab:material}
+\begin{tabular}{lrrrrrr}\toprule
+data & gap (nm) & $\lambda_T$ (nm) & $T_{\max}$ & $\Fp(\lambda_T)$ & $\eta_a$ & max $\Fp^{\parallel}/\Fp^{\perp}$\\\midrule
+JC (reference) & 5 & 608 & 117.0 & 1603 & 7.3\% & 49 (608)\\
+JC (reference) & 10 & 612 & 36.2 & 406 & 8.9\% & 136 (608)\\
+JC (reference) & 20 & 612 & 8.3 & 71 & 11.6\% & 75 (604)\\
+Palik & 5 & 652 & 193.1 & 2452 & 7.9\% & 80 (652)\\
+Palik & 10 & 652 & 58.1 & 688 & 8.5\% & 222 (652)\\
+Palik & 20 & 652 & 11.9 & 119 & 10.1\% & 116 (652)\\
+Olmon (evap.) & 5 & 604 & 145.6 & 1746 & 8.3\% & 62 (604)\\
+Olmon (evap.) & 10 & 604 & 44.2 & 488 & 9.1\% & 167 (604)\\
+Olmon (evap.) & 20 & 608 & 9.7 & 77 & 12.6\% & 85 (600)\\
+McPeak & 5 & 596 & 144.3 & 1584 & 9.1\% & 61 (592)\\
+McPeak & 10 & 596 & 44.3 & 443 & 10.0\% & 165 (592)\\
+McPeak & 20 & 600 & 9.6 & 68 & 14.3\% & 82 (592)\\
+JC + surface damping & 5 & 612 & 100.5 & 1395 & 7.2\% & 42 (608)\\
+JC + surface damping & 10 & 612 & 31.4 & 384 & 8.2\% & 117 (608)\\
+JC + surface damping & 20 & 616 & 7.4 & 60 & 12.3\% & 68 (608)\\
+JC, cold (0.039 eV) & 5 & 608 & 146.9 & 1762 & 8.3\% & 62 (608)\\
+JC, cold (0.039 eV) & 10 & 608 & 44.7 & 492 & 9.1\% & 168 (608)\\
+JC, cold (0.039 eV) & 20 & 612 & 9.8 & 77 & 12.8\% & 86 (604)\\
+JC, cold (0.020 eV) & 5 & 608 & 183.7 & 1933 & 9.5\% & 78 (608)\\
+JC, cold (0.020 eV) & 10 & 608 & 55.6 & 544 & 10.2\% & 206 (608)\\
+JC, cold (0.020 eV) & 20 & 612 & 11.6 & 82 & 14.3\% & 99 (604)\\
+\bottomrule\end{tabular}\end{table}
+
+\sloppy
+\section*{S9. Gold photoluminescence and single-photon purity}
+Absorption cross-sections of the rod for a plane wave polarised along its axis (BEM): \SI{1598}{nm^2} (\SI{405}{nm}),
+\SI{1421}{nm^2} (\SI{450}{nm}), \SI{1485}{nm^2} (\SI{532}{nm}) and \SI{9538}{nm^2} (\SI{610}{nm}). Gold
+photoluminescence yield $Y_{\rm PL}=10^{-6}$~[10], all of it assumed to fall into the detection band. Emitter at
+the radiative peak, $q_0=1$ (for $q_0=0.1$, $B/S$ differs by less than \SI{15}{\percent}).
+Script: \texttt{isi/analysis/g2\_background.py}.
+
+\begin{table}[h]\centering\small
+\caption{Background-to-signal ratio and $g^{(2)}(0)$ for pulsed excitation (emitter excitation probability $1-1/e$).
+$E_{\rm exc}=|E_z|^2/|E_0|^2$ at the emitter.}\label{tab:g2}
+\begin{tabular}{rrrrrr}\toprule
+gap (nm) & pump (nm) & $E_{\rm exc}$ & $\sigma_e$ (cm$^2$) & $B/S$ & $g^{(2)}(0)$\\\midrule
+5 & 405 & 3.2 & $10^{-16}$ & 1.1 & 0.773\\
+5 & 405 & 3.2 & $10^{-14}$ & 0.011 & 0.022\\
+5 & 532 & 1.8 & $10^{-16}$ & 1.81 & 0.873\\
+5 & 532 & 1.8 & $10^{-14}$ & 0.0181 & 0.035\\
+5 & 610 & 118.8 & $10^{-16}$ & 0.174 & 0.275\\
+5 & 610 & 118.8 & $10^{-14}$ & 0.00174 & 0.003\\
+10 & 405 & 1.7 & $10^{-16}$ & 1.69 & 0.862\\
+10 & 405 & 1.7 & $10^{-14}$ & 0.0169 & 0.033\\
+10 & 532 & 0.8 & $10^{-16}$ & 3.51 & 0.951\\
+10 & 532 & 0.8 & $10^{-14}$ & 0.0351 & 0.067\\
+10 & 610 & 36.9 & $10^{-16}$ & 0.46 & 0.531\\
+10 & 610 & 36.9 & $10^{-14}$ & 0.0046 & 0.009\\
+20 & 405 & 1.1 & $10^{-16}$ & 1.92 & 0.882\\
+20 & 405 & 1.1 & $10^{-14}$ & 0.0192 & 0.037\\
+20 & 532 & 0.7 & $10^{-16}$ & 3.07 & 0.939\\
+20 & 532 & 0.7 & $10^{-14}$ & 0.0307 & 0.059\\
+20 & 610 & 8.3 & $10^{-16}$ & 1.57 & 0.849\\
+20 & 610 & 8.3 & $10^{-14}$ & 0.0157 & 0.031\\
+\bottomrule\end{tabular}\end{table}
+
+\section*{S10. Comparison with Khatua \emph{et al.}: surface damping and substrate}
+The rods of the comparison with Khatua \emph{et al.} ($D=\SI{25}{nm}$, $L=39$--\SI{70}{nm}) were recomputed (i) in
+homogeneous glycerol ($n=1.47$) with surface-damped gold (Section~S8) and (ii) lying on glass ($n=1.52$), \SI{1}{nm}
+above it and covered by glycerol, with the dipole beyond the tip on the axis and parallel to it and excitation through
+the substrate at normal incidence, polarised along the rod (layer Green function, MNPBEM). Rates are normalised to bulk
+glycerol and $E_{\rm exc}$ to the field at the same position without the rod. Figure~\ref{fig:khvar} compares the three
+models with the measurements. Surface damping lowers the maximum enhancement from 903 to 674 (\SI{5}{nm} gap) and from
+\num{1.32e3} to 960 (\SI{3}{nm}); the substrate changes it by $+2$ and $+\SI{6}{\percent}$. For all three models the
+ratio of the measured to the calculated enhancement has the same spread (rms of $\log_{10}$ 0.29--0.33 at \SI{3}{nm}
+and 0.38--0.44 at \SI{5}{nm} under \SI{633}{nm} excitation; 0.39--0.54 under \SI{594}{nm}), i.e.\ neither effect
+reproduces the broader measured dependence on the resonance wavelength. Script: \texttt{isi/analysis/khatua\_variants.py}.
+
+\begin{figure}[h]\centering\includegraphics[width=0.9\linewidth]{fig_khatua_var.pdf}
+\caption{Maximum fluorescence enhancement versus resonance wavelength (radiative peak at a \SI{10}{nm} gap) for the
+homogeneous model, with surface damping and on a glass substrate (\SI{5}{nm} gap), and the measurements of Khatua
+\emph{et al.} (stars).}\label{fig:khvar}\end{figure}
+
+\section*{References}
+\noindent[1] P. B. Johnson and R. W. Christy, Phys. Rev. B \textbf{6}, 4370 (1972).\\
+\noindent[2] A. F. Oskooi \emph{et al.}, Comput. Phys. Commun. \textbf{181}, 687 (2010).\\
+\noindent[3] U. Hohenester and A. Tr\"ugler, Comput. Phys. Commun. \textbf{183}, 370 (2012).\\
+\noindent[4] J. Waxenegger, A. Tr\"ugler and U. Hohenester, Comput. Phys. Commun. \textbf{193}, 138 (2015).\\
+\noindent[5] U. Hohenester, Comput. Phys. Commun. \textbf{222}, 209 (2018).\\
+\noindent[6] R. Ruppin, J. Chem. Phys. \textbf{76}, 1681 (1982).\\
+\noindent[7] Y. S. Kim, P. T. Leung and T. F. George, Surf. Sci. \textbf{195}, 1 (1988).\\
+\noindent[8] Y. Luo \emph{et al.}, Phys. Rev. Lett. \textbf{111}, 093901 (2013).\\
+\noindent[9] J. Gersten and A. Nitzan, J. Chem. Phys. \textbf{75}, 1139 (1981).\\
+\noindent[10] M. Yorulmaz \emph{et al.}, Nano Lett. \textbf{12}, 4385 (2012).
+\end{document}
